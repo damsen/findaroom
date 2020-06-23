@@ -14,7 +14,7 @@ public class AccommodationTest {
     public void fromCreate_shouldReturnAccommodationWithMatchingProperties() {
 
         CreateAccommodation create = createAccommodation();
-        Accommodation acc = Accommodation.from(create);
+        Accommodation acc = Accommodation.from("123", false, create);
 
         assertThat(acc.getAccommodationId()).isNull();
         assertThat(acc.getName()).isEqualTo(create.getName());
@@ -24,8 +24,8 @@ public class AccommodationTest {
         assertThat(acc.getRestrooms()).isEqualTo(create.getRestrooms());
         assertThat(acc.getBedrooms()).isEqualTo(create.getBedrooms());
         assertThat(acc.getBeds()).isEqualTo(create.getBeds());
-        assertThat(acc.getHost().getHostId()).isEqualTo(create.getHost().getHostId());
-        assertThat(acc.getHost().isSuperHost()).isEqualTo(create.getHost().getSuperHost());
+        assertThat(acc.getHost().getHostId()).isEqualTo("123");
+        assertThat(acc.getHost().isSuperHost()).isFalse();
         assertThat(acc.getType()).isEqualTo(create.getType());
         assertThat(acc.getAddress().getCity()).isEqualTo(create.getAddress().getCity());
         assertThat(acc.getAddress().getCountry()).isEqualTo(create.getAddress().getCountry());

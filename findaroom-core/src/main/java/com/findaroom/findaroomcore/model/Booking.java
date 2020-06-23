@@ -45,10 +45,10 @@ public class Booking {
         return new Booking(null, accommodationId, userId, checkin, checkout, guests, Instant.now().truncatedTo(ChronoUnit.MILLIS), PENDING);
     }
 
-    public static Booking from(BookAccommodation book) {
+    public static Booking from(String accommodationId, String userId, BookAccommodation book) {
         return Booking.of(
-                book.getAccommodationId(),
-                book.getUserId(),
+                accommodationId,
+                userId,
                 book.getBookingDates().getCheckin(),
                 book.getBookingDates().getCheckout(),
                 book.getGuests()
@@ -64,17 +64,17 @@ public class Booking {
 
     @JsonIgnore
     public boolean isActive() {
-        return LocalDate.now().isBefore(checkin) && BookingStatus.activeStates().contains(status);
+        return LocalDate.now().isBefore(this.checkin) && BookingStatus.activeStates().contains(this.status);
     }
 
     @JsonIgnore
     public boolean isCompleted() {
-        return LocalDate.now().isAfter(checkout) && Objects.equals(status, DONE);
+        return LocalDate.now().isAfter(this.checkout) && Objects.equals(this.status, DONE);
     }
 
     @JsonIgnore
     public boolean isPending() {
-        return Objects.equals(status, PENDING);
+        return Objects.equals(this.status, PENDING);
     }
 
     public boolean hasDifferentDatesThan(BookingDates bookingDates) {

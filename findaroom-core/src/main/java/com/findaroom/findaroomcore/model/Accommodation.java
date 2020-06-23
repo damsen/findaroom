@@ -42,7 +42,7 @@ public class Accommodation {
         return new Accommodation(null, name, description, pricePerNight, 0.0d, maxGuests, true, restrooms, bedrooms, beds, host, type, address, amenities, List.of());
     }
 
-    public static Accommodation from(CreateAccommodation create) {
+    public static Accommodation from(String userId, boolean superHost, CreateAccommodation create) {
         return Accommodation.of(
                 create.getName(),
                 create.getDescription(),
@@ -51,7 +51,7 @@ public class Accommodation {
                 create.getRestrooms(),
                 create.getBedrooms(),
                 create.getBeds(),
-                Host.from(create.getHost()),
+                new Host(userId, superHost),
                 create.getType(),
                 Address.from(create.getAddress()),
                 create.getAmenities()

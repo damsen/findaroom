@@ -15,10 +15,10 @@ public class BookingTest {
     public void fromBook_shouldReturnBookingWithMatchingProperties() {
 
         BookAccommodation book = bookAccommodation();
-        Booking booking = Booking.from(book);
+        Booking booking = Booking.from("123", "444", book);
 
-        assertThat(booking.getAccommodationId()).isEqualTo(book.getAccommodationId());
-        assertThat(booking.getUserId()).isEqualTo(book.getUserId());
+        assertThat(booking.getAccommodationId()).isEqualTo("123");
+        assertThat(booking.getUserId()).isEqualTo("444");
         assertThat(booking.getCheckin()).isEqualTo(book.getBookingDates().getCheckin());
         assertThat(booking.getCheckout()).isEqualTo(book.getBookingDates().getCheckout());
         assertThat(booking.getGuests()).isEqualTo(book.getGuests());

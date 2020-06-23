@@ -44,18 +44,10 @@ public class PojoUtils {
         create.setRestrooms(1);
         create.setBedrooms(1);
         create.setBeds(2);
-        create.setHost(createHost());
         create.setType(WHOLE_APARTMENT);
         create.setAddress(createAddress());
         create.setAmenities(List.of(WIFI, KITCHEN));
         return create;
-    }
-
-    public static CreateAccommodation.Host createHost() {
-        CreateAccommodation.Host host = new CreateAccommodation.Host();
-        host.setHostId("444");
-        host.setSuperHost(false);
-        return host;
     }
 
     public static CreateAccommodation.Address createAddress() {
@@ -87,9 +79,6 @@ public class PojoUtils {
 
     public static ReviewAccommodation reviewAccommodation() {
         ReviewAccommodation review = new ReviewAccommodation();
-        review.setAccommodationId("123");
-        review.setBookingId("111");
-        review.setUserId("444");
         review.setMessage("message");
         review.setRating(4.0);
         return review;
@@ -102,8 +91,6 @@ public class PojoUtils {
         bookingDates.setCheckout(LocalDate.now().plusDays(14));
         book.setBookingDates(bookingDates);
         book.setGuests(2);
-        book.setAccommodationId("123");
-        book.setUserId("444");
         return book;
     }
 

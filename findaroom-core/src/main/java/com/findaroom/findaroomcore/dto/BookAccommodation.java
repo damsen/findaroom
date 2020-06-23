@@ -16,6 +16,4 @@ public class BookAccommodation {
 
     @NotNull @Valid BookingDates bookingDates;
     @NotNull @Positive Integer guests;
-    String accommodationId;
-    String userId;
 }

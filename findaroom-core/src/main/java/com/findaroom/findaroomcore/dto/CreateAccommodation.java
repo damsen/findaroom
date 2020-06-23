@@ -26,7 +26,6 @@ public class CreateAccommodation {
     @NotNull AccommodationType type;
     @NotNull @Valid Address address;
     @NotNull List<Amenity> amenities;
-    Host host;
 
     @Getter
     @Setter
@@ -51,16 +50,5 @@ public class CreateAccommodation {
         public GeoJsonPoint toGeoJsonPoint(){
             return new GeoJsonPoint(x, y);
         }
-    }
-
-    @Getter
-    @Setter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    @FieldDefaults(level = AccessLevel.PRIVATE)
-    public static class Host {
-
-        String hostId;
-        Boolean superHost;
     }
 }

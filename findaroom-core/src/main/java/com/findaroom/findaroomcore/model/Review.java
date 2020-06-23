@@ -36,11 +36,11 @@ public class Review {
         return new Review(null, accommodationId, userId, bookingId, rating, message, Instant.now().truncatedTo(ChronoUnit.MILLIS));
     }
 
-    public static Review from(ReviewAccommodation review) {
+    public static Review from(String accommodationId, String userId, String bookingId, ReviewAccommodation review) {
         return Review.of(
-                review.getAccommodationId(),
-                review.getUserId(),
-                review.getBookingId(),
+                accommodationId,
+                userId,
+                bookingId,
                 review.getRating(),
                 review.getMessage()
         );

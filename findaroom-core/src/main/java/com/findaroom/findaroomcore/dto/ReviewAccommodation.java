@@ -17,7 +17,5 @@ public class ReviewAccommodation {
 
     @NotNull @DecimalMin("1.0") @DecimalMax("5.0") Double rating;
     @NotBlank String message;
-    String accommodationId;
-    String userId;
-    String bookingId;
+
 }

@@ -13,11 +13,11 @@ public class ReviewTest {
     public void fromReview_shouldReturnReviewWithMatchingProperties() {
 
         ReviewAccommodation review = reviewAccommodation();
-        Review rev = Review.from(review);
+        Review rev = Review.from("123", "444", "111", review);
 
-        assertThat(rev.getAccommodationId()).isEqualTo(review.getAccommodationId());
-        assertThat(rev.getUserId()).isEqualTo(review.getUserId());
-        assertThat(rev.getBookingId()).isEqualTo(review.getBookingId());
+        assertThat(rev.getAccommodationId()).isEqualTo("123");
+        assertThat(rev.getUserId()).isEqualTo("444");
+        assertThat(rev.getBookingId()).isEqualTo("111");
         assertThat(rev.getMessage()).isEqualTo(review.getMessage());
         assertThat(rev.getRating()).isEqualTo(review.getRating());
     }

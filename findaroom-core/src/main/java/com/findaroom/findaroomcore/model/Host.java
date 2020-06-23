@@ -1,6 +1,5 @@
 package com.findaroom.findaroomcore.model;
 
-import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,7 +15,4 @@ public class Host {
     String hostId;
     boolean superHost;
 
-    public static Host from(CreateAccommodation.Host host) {
-        return new Host(host.getHostId(), host.getSuperHost());
-    }
 }
