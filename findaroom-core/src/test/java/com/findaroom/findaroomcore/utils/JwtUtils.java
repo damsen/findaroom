@@ -3,7 +3,6 @@ package com.findaroom.findaroomcore.utils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.jwt.Jwt;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 public class JwtUtils {

@@ -1,11 +1,10 @@
 package com.findaroom.findaroomcore.controller;
 
-import com.findaroom.findaroomcore.dto.aggregates.AccommodationDetails;
 import com.findaroom.findaroomcore.dto.filter.AccommodationSearchFilter;
 import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
-import com.findaroom.findaroomcore.facade.PublicApiFacade;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Review;
+import com.findaroom.findaroomcore.service.PublicApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,7 +18,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class PublicApiController {
 
-    private final PublicApiFacade publicApi;
+    private final PublicApiService publicApi;
 
     @GetMapping("/accommodations")
     public Flux<Accommodation> getAccommodations(AccommodationSearchFilter filter) {
@@ -27,8 +26,8 @@ public class PublicApiController {
     }
 
     @GetMapping("/accommodations/{accommodationId}")
-    public Mono<AccommodationDetails> getAccommodationDetails(@PathVariable String accommodationId) {
-        return publicApi.findAccommodationDetails(accommodationId);
+    public Mono<Accommodation> getAccommodationById(@PathVariable String accommodationId) {
+        return publicApi.findAccommodationById(accommodationId);
     }
 
     @GetMapping("/accommodations/{accommodationId}/reviews")

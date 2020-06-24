@@ -6,7 +6,6 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import static com.findaroom.findaroomcore.model.enums.AccommodationType.WHOLE_APARTMENT;

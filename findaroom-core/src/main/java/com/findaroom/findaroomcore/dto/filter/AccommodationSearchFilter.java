@@ -4,7 +4,6 @@ import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.model.enums.AccommodationType;
 import com.findaroom.findaroomcore.model.enums.Amenity;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.geo.Box;

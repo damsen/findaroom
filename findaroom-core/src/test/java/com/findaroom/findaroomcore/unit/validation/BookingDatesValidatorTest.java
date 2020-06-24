@@ -2,15 +2,11 @@ package com.findaroom.findaroomcore.unit.validation;
 
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.dto.validation.BookingDatesValidator;
-import com.findaroom.findaroomcore.utils.PojoUtils;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import java.time.LocalDate;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookingDatesValidatorTest {
 

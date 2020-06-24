@@ -6,15 +6,12 @@ import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import com.findaroom.findaroomcore.dto.ReviewAccommodation;
-import com.findaroom.findaroomcore.dto.aggregates.BookingDetails;
-import com.findaroom.findaroomcore.facade.UserOpsFacade;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
+import com.findaroom.findaroomcore.service.UserOpsService;
 import com.findaroom.findaroomcore.utils.JwtUtils;
 import com.findaroom.findaroomcore.utils.PojoUtils;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,15 +19,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static com.findaroom.findaroomcore.utils.JwtUtils.addJwt;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @WebFluxTest(UserOpsController.class)
@@ -41,7 +35,7 @@ public class UserOpsControllerTest {
     private WebTestClient webTestClient;
 
     @MockBean
-    private UserOpsFacade userOps;
+    private UserOpsService userOps;
 
     @MockBean
     private ReactiveJwtDecoder jwtDecoder;
@@ -83,10 +77,9 @@ public class UserOpsControllerTest {
     }
 
     @Test
-    public void getBookingDetails() {
+    public void getUserBookingById() {
 
-        var details = new BookingDetails(PojoUtils.accommodation(), PojoUtils.booking());
-        when(userOps.findBookingDetails(anyString(), anyString())).thenReturn(Mono.just(details));
+        when(userOps.findUserBookingById(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.booking()));
 
         Jwt jwt = JwtUtils.jwt();
         when(jwtDecoder.decode(anyString())).thenReturn(Mono.just(jwt));
@@ -99,8 +92,7 @@ public class UserOpsControllerTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.accommodation").isNotEmpty()
-                .jsonPath("@.booking").isNotEmpty();
+                .jsonPath("@").isNotEmpty();
     }
 
     @Test
@@ -143,8 +135,7 @@ public class UserOpsControllerTest {
     @Test
     public void bookAccommodation() {
 
-        var details = new BookingDetails(PojoUtils.accommodation(), PojoUtils.booking());
-        when(userOps.bookAccommodation(anyString(), anyString(), any())).thenReturn(Mono.just(details));
+        when(userOps.bookAccommodation(anyString(), anyString(), any())).thenReturn(Mono.just(PojoUtils.booking()));
 
         Jwt jwt = JwtUtils.jwt();
         when(jwtDecoder.decode(anyString())).thenReturn(Mono.just(jwt));
@@ -159,8 +150,7 @@ public class UserOpsControllerTest {
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.accommodation").isNotEmpty()
-                .jsonPath("@.booking").isNotEmpty();
+                .jsonPath("@").isNotEmpty();
     }
 
     @Test

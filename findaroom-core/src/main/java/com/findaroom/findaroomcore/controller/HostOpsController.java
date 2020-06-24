@@ -3,9 +3,9 @@ package com.findaroom.findaroomcore.controller;
 import com.findaroom.findaroomcore.dto.UpdateAccommodation;
 import com.findaroom.findaroomcore.dto.filter.AccommodationSearchFilter;
 import com.findaroom.findaroomcore.dto.filter.BookingSearchFilter;
-import com.findaroom.findaroomcore.facade.HostOpsFacade;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
+import com.findaroom.findaroomcore.service.HostOpsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -20,7 +20,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class HostOpsController {
 
-    private final HostOpsFacade hostOps;
+    private final HostOpsService hostOps;
 
     @GetMapping("/my-accommodations")
     public Flux<Accommodation> getHostAccommodations(AccommodationSearchFilter filter,

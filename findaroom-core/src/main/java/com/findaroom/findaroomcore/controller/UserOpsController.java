@@ -4,13 +4,12 @@ import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import com.findaroom.findaroomcore.dto.ReviewAccommodation;
-import com.findaroom.findaroomcore.dto.aggregates.BookingDetails;
 import com.findaroom.findaroomcore.dto.filter.BookingSearchFilter;
 import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
-import com.findaroom.findaroomcore.facade.UserOpsFacade;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
+import com.findaroom.findaroomcore.service.UserOpsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,7 +25,7 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class UserOpsController {
 
-    private final UserOpsFacade userOps;
+    private final UserOpsService userOps;
 
     @GetMapping("/my-bookings")
     public Flux<Booking> getUserBookings(BookingSearchFilter filter,
@@ -41,9 +40,9 @@ public class UserOpsController {
     }
 
     @GetMapping("/my-bookings/{bookingId}")
-    public Mono<BookingDetails> getBookingDetails(@PathVariable String bookingId,
-                                                  @AuthenticationPrincipal Jwt jwt) {
-        return userOps.findBookingDetails(bookingId, jwt.getSubject());
+    public Mono<Booking> getUserBookingById(@PathVariable String bookingId,
+                                            @AuthenticationPrincipal Jwt jwt) {
+        return userOps.findUserBookingById(bookingId, jwt.getSubject());
     }
 
     @PostMapping(value = "/accommodations")
@@ -55,9 +54,9 @@ public class UserOpsController {
 
     @PostMapping("/accommodations/{accommodationId}/bookings")
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<BookingDetails> bookAccommodation(@PathVariable String accommodationId,
-                                                  @RequestBody @Valid BookAccommodation book,
-                                                  @AuthenticationPrincipal Jwt jwt) {
+    public Mono<Booking> bookAccommodation(@PathVariable String accommodationId,
+                                           @RequestBody @Valid BookAccommodation book,
+                                           @AuthenticationPrincipal Jwt jwt) {
         return userOps.bookAccommodation(accommodationId, jwt.getSubject(), book);
     }
 

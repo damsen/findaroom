@@ -2,14 +2,15 @@ package com.findaroom.findaroomcore.dto;
 
 import com.findaroom.findaroomcore.model.enums.AccommodationType;
 import com.findaroom.findaroomcore.model.enums.Amenity;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter

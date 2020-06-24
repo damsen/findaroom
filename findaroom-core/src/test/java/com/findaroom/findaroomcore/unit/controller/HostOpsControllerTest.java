@@ -3,8 +3,8 @@ package com.findaroom.findaroomcore.unit.controller;
 import com.findaroom.findaroomcore.config.SecurityConfig;
 import com.findaroom.findaroomcore.controller.HostOpsController;
 import com.findaroom.findaroomcore.dto.UpdateAccommodation;
-import com.findaroom.findaroomcore.facade.HostOpsFacade;
 import com.findaroom.findaroomcore.model.Booking;
+import com.findaroom.findaroomcore.service.HostOpsService;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,15 +14,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 
@@ -34,7 +31,7 @@ public class HostOpsControllerTest {
     private WebTestClient webTestClient;
 
     @MockBean
-    private HostOpsFacade hostOps;
+    private HostOpsService hostOps;
 
     @MockBean
     private ReactiveJwtDecoder jwtDecoder;

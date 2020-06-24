@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.findaroom.findaroomcore.model.enums.AccommodationType.*;
 import static com.findaroom.findaroomcore.model.enums.Amenity.*;
