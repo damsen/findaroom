@@ -1,8 +1,8 @@
 package com.findaroom.findaroomcore.unit.repo;
 
-import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.repo.ReviewRepo;
+import com.findaroom.findaroomcore.repo.ReviewRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +17,10 @@ import static com.findaroom.findaroomcore.utils.PojoUtils.review;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
-public class ReviewRepoTest {
+public class ReviewRepositoryTest {
 
     @Autowired
-    private ReviewRepo repo;
+    private ReviewRepository repo;
 
     @BeforeEach
     public void setup() {

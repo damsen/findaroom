@@ -1,7 +1,7 @@
 package com.findaroom.findaroomcore.controller;
 
-import com.findaroom.findaroomcore.dto.filter.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.service.PublicApiService;

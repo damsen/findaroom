@@ -1,8 +1,8 @@
 package com.findaroom.findaroomcore.repo.impl;
 
-import com.findaroom.findaroomcore.dto.filter.BookingSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
 import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.repo.CustomBookingRepo;
+import com.findaroom.findaroomcore.repo.CustomBookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @RequiredArgsConstructor
-public class CustomBookingRepoImpl implements CustomBookingRepo {
+public class CustomBookingRepositoryImpl implements CustomBookingRepository {
 
     private final ReactiveMongoOperations mongoOps;
 

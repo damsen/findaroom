@@ -1,13 +1,13 @@
 package com.findaroom.findaroomcore.service;
 
 import com.findaroom.findaroomcore.dto.UpdateAccommodation;
-import com.findaroom.findaroomcore.dto.filter.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filter.BookingSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.enums.BookingStatus;
-import com.findaroom.findaroomcore.repo.AccommodationRepo;
-import com.findaroom.findaroomcore.repo.BookingRepo;
+import com.findaroom.findaroomcore.repo.AccommodationRepository;
+import com.findaroom.findaroomcore.repo.BookingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -26,10 +26,10 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @Service
 @RequiredArgsConstructor
-public class HostOpsService {
+public class HostOperationsService {
 
-    private final AccommodationRepo accommodationRepo;
-    private final BookingRepo bookingRepo;
+    private final AccommodationRepository accommodationRepo;
+    private final BookingRepository bookingRepo;
 
     public Flux<Accommodation> findAccommodationsByHostId(String hostId, AccommodationSearchFilter filter) {
         filter.setHostId(hostId);

@@ -1,4 +1,4 @@
-package com.findaroom.findaroomcore.dto.filter;
+package com.findaroom.findaroomcore.dto.filters;
 
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.model.enums.BookingStatus;

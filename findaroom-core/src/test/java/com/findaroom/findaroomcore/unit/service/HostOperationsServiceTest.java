@@ -1,12 +1,12 @@
 package com.findaroom.findaroomcore.unit.service;
 
-import com.findaroom.findaroomcore.dto.filter.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filter.BookingSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.repo.AccommodationRepo;
-import com.findaroom.findaroomcore.repo.BookingRepo;
-import com.findaroom.findaroomcore.service.HostOpsService;
+import com.findaroom.findaroomcore.repo.AccommodationRepository;
+import com.findaroom.findaroomcore.repo.BookingRepository;
+import com.findaroom.findaroomcore.service.HostOperationsService;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import com.findaroom.findaroomcore.utils.PredicateUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,19 +27,19 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class HostOpsServiceTest {
+public class HostOperationsServiceTest {
 
     @MockBean
-    private AccommodationRepo accommodationRepo;
+    private AccommodationRepository accommodationRepo;
 
     @MockBean
-    private BookingRepo bookingRepo;
+    private BookingRepository bookingRepo;
 
-    private HostOpsService hostOps;
+    private HostOperationsService hostOps;
 
     @BeforeAll
     public void setup() {
-        hostOps = new HostOpsService(accommodationRepo, bookingRepo);
+        hostOps = new HostOperationsService(accommodationRepo, bookingRepo);
     }
 
     @Test

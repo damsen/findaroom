@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface BookingRepo extends ReactiveMongoRepository<Booking, String>, CustomBookingRepo {
+public interface BookingRepository extends ReactiveMongoRepository<Booking, String>, CustomBookingRepository {
 
     Mono<Booking> findByBookingIdAndAccommodationId(String bookingId, String accommodationId);
 

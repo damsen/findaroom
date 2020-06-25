@@ -1,10 +1,10 @@
 package com.findaroom.findaroomcore.unit.controller;
 
 import com.findaroom.findaroomcore.config.SecurityConfig;
-import com.findaroom.findaroomcore.controller.HostOpsController;
+import com.findaroom.findaroomcore.controller.HostOperationsController;
 import com.findaroom.findaroomcore.dto.UpdateAccommodation;
 import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.service.HostOpsService;
+import com.findaroom.findaroomcore.service.HostOperationsService;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,15 +23,15 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 
-@WebFluxTest(HostOpsController.class)
+@WebFluxTest(HostOperationsController.class)
 @Import(SecurityConfig.class)
-public class HostOpsControllerTest {
+public class HostOperationsControllerTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
     @MockBean
-    private HostOpsService hostOps;
+    private HostOperationsService hostOps;
 
     @MockBean
     private ReactiveJwtDecoder jwtDecoder;

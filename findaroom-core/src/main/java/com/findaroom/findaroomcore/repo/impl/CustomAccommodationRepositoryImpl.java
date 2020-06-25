@@ -1,8 +1,8 @@
 package com.findaroom.findaroomcore.repo.impl;
 
-import com.findaroom.findaroomcore.dto.filter.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.repo.CustomAccommodationRepo;
+import com.findaroom.findaroomcore.repo.CustomAccommodationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
@@ -13,7 +13,7 @@ import static org.springframework.data.mongodb.core.query.Criteria.where;
 import static org.springframework.data.mongodb.core.query.Query.query;
 
 @RequiredArgsConstructor
-public class CustomAccommodationRepoImpl implements CustomAccommodationRepo {
+public class CustomAccommodationRepositoryImpl implements CustomAccommodationRepository {
 
     private final ReactiveMongoOperations mongoOps;
 

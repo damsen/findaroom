@@ -2,15 +2,15 @@ package com.findaroom.findaroomcore.unit.service;
 
 import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
-import com.findaroom.findaroomcore.dto.filter.BookingSearchFilter;
-import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.repo.AccommodationRepo;
-import com.findaroom.findaroomcore.repo.BookingRepo;
-import com.findaroom.findaroomcore.repo.ReviewRepo;
-import com.findaroom.findaroomcore.service.UserOpsService;
+import com.findaroom.findaroomcore.repo.AccommodationRepository;
+import com.findaroom.findaroomcore.repo.BookingRepository;
+import com.findaroom.findaroomcore.repo.ReviewRepository;
+import com.findaroom.findaroomcore.service.UserOperationsService;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import com.findaroom.findaroomcore.utils.PredicateUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -34,22 +34,22 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class UserOpsServiceTest {
+public class UserOperationsServiceTest {
 
     @MockBean
-    private AccommodationRepo accommodationRepo;
+    private AccommodationRepository accommodationRepo;
 
     @MockBean
-    private BookingRepo bookingRepo;
+    private BookingRepository bookingRepo;
     
     @MockBean
-    private ReviewRepo reviewRepo;
+    private ReviewRepository reviewRepo;
     
-    private UserOpsService userOps;
+    private UserOperationsService userOps;
 
     @BeforeAll
     public void setup() {
-        userOps = new UserOpsService(accommodationRepo, bookingRepo, reviewRepo);
+        userOps = new UserOperationsService(accommodationRepo, bookingRepo, reviewRepo);
     }
 
     @Test

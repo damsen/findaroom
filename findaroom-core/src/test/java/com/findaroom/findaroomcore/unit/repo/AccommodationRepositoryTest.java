@@ -1,8 +1,8 @@
 package com.findaroom.findaroomcore.unit.repo;
 
-import com.findaroom.findaroomcore.dto.filter.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.repo.AccommodationRepo;
+import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +20,10 @@ import static com.findaroom.findaroomcore.utils.PojoUtils.accommodation;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest
-public class AccommodationRepoTest {
+public class AccommodationRepositoryTest {
 
     @Autowired
-    private AccommodationRepo repo;
+    private AccommodationRepository repo;
 
     @BeforeEach
     public void setup() {

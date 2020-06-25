@@ -4,14 +4,14 @@ import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import com.findaroom.findaroomcore.dto.ReviewAccommodation;
-import com.findaroom.findaroomcore.dto.filter.BookingSearchFilter;
-import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.repo.AccommodationRepo;
-import com.findaroom.findaroomcore.repo.BookingRepo;
-import com.findaroom.findaroomcore.repo.ReviewRepo;
+import com.findaroom.findaroomcore.repo.AccommodationRepository;
+import com.findaroom.findaroomcore.repo.BookingRepository;
+import com.findaroom.findaroomcore.repo.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,11 +28,11 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @Service
 @RequiredArgsConstructor
-public class UserOpsService {
+public class UserOperationsService {
 
-    private final AccommodationRepo accommodationRepo;
-    private final BookingRepo bookingRepo;
-    private final ReviewRepo reviewRepo;
+    private final AccommodationRepository accommodationRepo;
+    private final BookingRepository bookingRepo;
+    private final ReviewRepository reviewRepo;
 
     public Flux<Booking> findBookingsByUserId(String userId, BookingSearchFilter filter) {
         filter.setUserId(userId);

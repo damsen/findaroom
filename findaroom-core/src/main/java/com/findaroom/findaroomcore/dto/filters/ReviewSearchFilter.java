@@ -1,4 +1,4 @@
-package com.findaroom.findaroomcore.dto.filter;
+package com.findaroom.findaroomcore.dto.filters;
 
 import lombok.AccessLevel;
 import lombok.Setter;

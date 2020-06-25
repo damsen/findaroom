@@ -4,12 +4,12 @@ import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import com.findaroom.findaroomcore.dto.ReviewAccommodation;
-import com.findaroom.findaroomcore.dto.filter.BookingSearchFilter;
-import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.service.UserOpsService;
+import com.findaroom.findaroomcore.service.UserOperationsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,9 +23,9 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/api/v1/user-ops")
 @RequiredArgsConstructor
-public class UserOpsController {
+public class UserOperationsController {
 
-    private final UserOpsService userOps;
+    private final UserOperationsService userOps;
 
     @GetMapping("/my-bookings")
     public Flux<Booking> getUserBookings(BookingSearchFilter filter,

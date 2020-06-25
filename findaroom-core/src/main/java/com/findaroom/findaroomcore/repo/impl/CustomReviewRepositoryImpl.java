@@ -1,8 +1,8 @@
 package com.findaroom.findaroomcore.repo.impl;
 
-import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.repo.CustomReviewRepo;
+import com.findaroom.findaroomcore.repo.CustomReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.ReactiveMongoOperations;
 import org.springframework.data.mongodb.core.query.CriteriaDefinition;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Flux;
 import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 @RequiredArgsConstructor
-public class CustomReviewRepoImpl implements CustomReviewRepo {
+public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 
     private final ReactiveMongoOperations mongoOps;
 

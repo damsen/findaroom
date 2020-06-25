@@ -1,13 +1,13 @@
 package com.findaroom.findaroomcore.unit.service;
 
-import com.findaroom.findaroomcore.dto.filter.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.repo.AccommodationRepo;
-import com.findaroom.findaroomcore.repo.BookingRepo;
-import com.findaroom.findaroomcore.repo.ReviewRepo;
+import com.findaroom.findaroomcore.repo.AccommodationRepository;
+import com.findaroom.findaroomcore.repo.BookingRepository;
+import com.findaroom.findaroomcore.repo.ReviewRepository;
 import com.findaroom.findaroomcore.service.PublicApiService;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import com.findaroom.findaroomcore.utils.PredicateUtils;
@@ -33,13 +33,13 @@ import static org.mockito.Mockito.when;
 public class PublicApiServiceTest {
 
     @MockBean
-    private AccommodationRepo accommodationRepo;
+    private AccommodationRepository accommodationRepo;
 
     @MockBean
-    private BookingRepo bookingRepo;
+    private BookingRepository bookingRepo;
     
     @MockBean
-    private ReviewRepo reviewRepo;
+    private ReviewRepository reviewRepo;
     
     private PublicApiService publicApi;
 
