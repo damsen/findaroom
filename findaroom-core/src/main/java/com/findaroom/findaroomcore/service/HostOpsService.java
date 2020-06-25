@@ -64,20 +64,19 @@ public class HostOpsService {
     }
 
     public Mono<Accommodation> unlistAccommodation(String accommodationId, String hostId) {
-
-        var unlisted = unlistAccommodationInternal(accommodationId, hostId);
-        var cancelled = cancelAllBookings(accommodationId);
-
-        return unlisted.flatMap(cancelled::thenReturn);
+        return unlistAccommodationInternal(accommodationId, hostId)
+                .flatMap(unlisted -> cancelAllBookings(accommodationId).thenReturn(unlisted));
     }
 
     private Mono<Booking> updateBookingStatus(String accommodationId, String bookingId, String hostId,
                               Predicate<Booking> filterByStatus, Consumer<Booking> changeStatus) {
 
-        var accommodationById = accommodationRepo.findByAccommodationIdAndHostId(accommodationId, hostId)
+        var accommodationById = accommodationRepo
+                .findByAccommodationIdAndHostId(accommodationId, hostId)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND)));
 
-        var bookingById = bookingRepo.findByBookingIdAndAccommodationId(bookingId, accommodationId)
+        var bookingById = bookingRepo
+                .findByBookingIdAndAccommodationId(bookingId, accommodationId)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND)))
                 .filter(filterByStatus)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)));

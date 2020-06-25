@@ -9,7 +9,6 @@ import com.findaroom.findaroomcore.dto.filter.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.model.enums.BookingStatus;
 import com.findaroom.findaroomcore.repo.AccommodationRepo;
 import com.findaroom.findaroomcore.repo.BookingRepo;
 import com.findaroom.findaroomcore.repo.ReviewRepo;
@@ -22,8 +21,8 @@ import reactor.util.function.Tuple2;
 
 import java.util.stream.Collectors;
 
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.*;
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
+import static com.findaroom.findaroomcore.model.enums.BookingStatus.activeStates;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
@@ -74,7 +73,7 @@ public class UserOpsService {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)));
 
         return Mono.zip(accommodationById, userHasBookingsBetweenDates, accommodationAlreadyBooked)
-                .then(bookingRepo.save(Booking.from(accommodationId, userId, book)));
+                .flatMap(t -> bookingRepo.save(Booking.from(accommodationId, userId, book)));
     }
 
     public Mono<Review> reviewAccommodation(String accommodationId, String bookingId, String userId, ReviewAccommodation review) {
@@ -112,11 +111,11 @@ public class UserOpsService {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
                 .filter(booking -> booking.hasDifferentDatesThan(reschedule))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
-                .filterWhen(booking -> isAccommodationBookedExcludingBooking(booking.getAccommodationId(), booking.getBookingId(), reschedule)
-                        .map(alreadyBooked -> !alreadyBooked))
-                .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
                 .filterWhen(booking -> doesUserHaveBookingsBetweenDatesExcludingBooking(userId, booking.getBookingId(), reschedule)
                         .map(hasBookings -> !hasBookings))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
+                .filterWhen(booking -> isAccommodationBookedExcludingBooking(booking.getAccommodationId(), booking.getBookingId(), reschedule)
+                        .map(alreadyBooked -> !alreadyBooked))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
                 .doOnNext(booking -> booking.rescheduleWith(reschedule))
                 .flatMap(bookingRepo::save);
@@ -147,13 +146,11 @@ public class UserOpsService {
     }
 
     private Mono<Review> reviewAccommodationInternal(Accommodation accommodation, Review review) {
-
-        var saved = reviewRepo.save(review);
-        var rated = calculateNewAverageRating(accommodation.getAccommodationId())
-                .doOnNext(accommodation::setRating)
-                .then(accommodationRepo.save(accommodation));
-
-        return saved.flatMap(rated::thenReturn);
+        return reviewRepo.save(review)
+                .flatMap(saved -> calculateNewAverageRating(accommodation.getAccommodationId())
+                        .doOnNext(accommodation::setRating)
+                        .then(accommodationRepo.save(accommodation))
+                        .thenReturn(saved));
     }
 
     private Mono<Double> calculateNewAverageRating(String accommodationId) {
