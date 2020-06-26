@@ -87,6 +87,22 @@ public class UserOperationsServiceTest {
     }
 
     @Test
+    public void findUserFavorites() {
+
+        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(PojoUtils.accommodation()));
+
+        var filter = new AccommodationSearchFilter();
+        Flux<Accommodation> favorites = userOps.findUserFavorites(List.of("123"), filter);
+
+        StepVerifier
+                .create(favorites)
+                .expectNextCount(1)
+                .verifyComplete();
+
+        assertThat(filter.getSelect().block()).contains("123");
+    }
+
+    @Test
     public void findUserBookingById() {
 
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.booking()));
@@ -446,22 +462,6 @@ public class UserOperationsServiceTest {
                 .create(booking)
                 .expectErrorMatches(PredicateUtils.unprocessableEntity())
                 .verify();
-    }
-
-    @Test
-    public void findUserFavorites() {
-
-        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(PojoUtils.accommodation()));
-
-        var filter = new AccommodationSearchFilter();
-        Flux<Accommodation> favorites = userOps.findUserFavorites(List.of("123"), filter);
-
-        StepVerifier
-                .create(favorites)
-                .expectNextCount(1)
-                .verifyComplete();
-
-        assertThat(filter.getSelect().block()).contains("123");
     }
 
 }

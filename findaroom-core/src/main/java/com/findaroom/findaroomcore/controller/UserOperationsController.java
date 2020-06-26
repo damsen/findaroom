@@ -40,6 +40,12 @@ public class UserOperationsController {
         return userOps.findReviewsByUserId(jwt.getSubject(), filter);
     }
 
+    @GetMapping("/my-favorites")
+    public Flux<Accommodation> getUserFavorites(AccommodationSearchFilter filter,
+                                                @AuthenticationPrincipal Jwt jwt) {
+        return userOps.findUserFavorites(jwt.getClaimAsStringList("favoriteAccommodations"), filter);
+    }
+
     @GetMapping("/my-bookings/{bookingId}")
     public Mono<Booking> getUserBookingById(@PathVariable String bookingId,
                                             @AuthenticationPrincipal Jwt jwt) {
@@ -81,11 +87,5 @@ public class UserOperationsController {
                                            @RequestBody @Valid BookingDates reschedule,
                                            @AuthenticationPrincipal Jwt jwt) {
         return userOps.rescheduleBooking(bookingId, jwt.getSubject(), reschedule);
-    }
-
-    @GetMapping("/my-favorites")
-    public Flux<Accommodation> getUserFavorites(AccommodationSearchFilter filter,
-                                                @AuthenticationPrincipal Jwt jwt) {
-        return userOps.findUserFavorites(jwt.getClaimAsStringList("favoriteAccommodations"), filter);
     }
 }

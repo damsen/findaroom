@@ -46,6 +46,11 @@ public class UserOperationsService {
         return reviewRepo.findAllByFilter(filter);
     }
 
+    public Flux<Accommodation> findUserFavorites(List<String> favoriteIds, AccommodationSearchFilter filter) {
+        filter.setSelect(favoriteIds);
+        return accommodationRepo.findAllByFilter(filter);
+    }
+
     public Mono<Booking> findUserBookingById(String bookingId, String userId) {
         return bookingRepo
                 .findByBookingIdAndUserId(bookingId, userId)
@@ -121,11 +126,6 @@ public class UserOperationsService {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
                 .doOnNext(booking -> booking.rescheduleWith(reschedule))
                 .flatMap(bookingRepo::save);
-    }
-
-    public Flux<Accommodation> findUserFavorites(List<String> favoriteIds, AccommodationSearchFilter filter) {
-        filter.setSelect(favoriteIds);
-        return accommodationRepo.findAllByFilter(filter);
     }
 
     private Mono<Boolean> doesUserHaveBookingsBetweenDates(String userId, BookingDates dates) {
