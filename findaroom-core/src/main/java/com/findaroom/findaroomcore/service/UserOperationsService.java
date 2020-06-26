@@ -4,6 +4,7 @@ import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import com.findaroom.findaroomcore.dto.ReviewAccommodation;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
 import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
 import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
@@ -19,6 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
@@ -119,6 +121,11 @@ public class UserOperationsService {
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
                 .doOnNext(booking -> booking.rescheduleWith(reschedule))
                 .flatMap(bookingRepo::save);
+    }
+
+    public Flux<Accommodation> findUserFavorites(List<String> favoriteIds, AccommodationSearchFilter filter) {
+        filter.setSelect(favoriteIds);
+        return accommodationRepo.findAllByFilter(filter);
     }
 
     private Mono<Boolean> doesUserHaveBookingsBetweenDates(String userId, BookingDates dates) {

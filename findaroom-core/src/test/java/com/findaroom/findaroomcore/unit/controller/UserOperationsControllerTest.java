@@ -6,6 +6,7 @@ import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import com.findaroom.findaroomcore.dto.ReviewAccommodation;
+import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.service.UserOperationsService;
@@ -266,5 +267,26 @@ public class UserOperationsControllerTest {
                 .bodyValue(new BookingDates())
                 .exchange()
                 .expectStatus().isBadRequest();
+    }
+
+    @Test
+    public void getUserFavorites() {
+
+        Accommodation acc = PojoUtils.accommodation();
+        acc.setAccommodationId("123");
+        when(userOps.findUserFavorites(any(), any())).thenReturn(Flux.just(acc));
+
+        Jwt jwt = JwtUtils.jwt();
+        when(jwtDecoder.decode(anyString())).thenReturn(Mono.just(jwt));
+
+        webTestClient
+                .get()
+                .uri("/api/v1/user-ops/my-favorites")
+                .headers(addJwt(jwt))
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("@.[0].accommodationId", "123").exists();
     }
 }

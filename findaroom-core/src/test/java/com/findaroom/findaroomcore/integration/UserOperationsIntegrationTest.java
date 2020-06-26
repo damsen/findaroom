@@ -27,6 +27,7 @@ import java.time.LocalDate;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.*;
 import static com.findaroom.findaroomcore.utils.JwtUtils.addJwt;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
@@ -566,5 +567,31 @@ public class UserOperationsIntegrationTest {
                 .bodyValue(reschedule)
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+    }
+
+    @Test
+    public void getUserFavorites() {
+
+        Accommodation acc1 = PojoUtils.accommodation();
+        acc1.setAccommodationId("123");
+        Accommodation acc2 = PojoUtils.accommodation();
+        acc2.setAccommodationId("456");
+        Accommodation acc3 = PojoUtils.accommodation();
+        acc3.setAccommodationId("789");
+        accommodationRepo.saveAll(Flux.just(acc1, acc2, acc3)).blockLast();
+
+        Jwt jwt = JwtUtils.jwt();
+        when(jwtDecoder.decode(anyString())).thenReturn(Mono.just(jwt));
+
+        webTestClient
+                .get()
+                .uri("/api/v1/user-ops/my-favorites")
+                .headers(addJwt(jwt))
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("@.[0].accommodationId", "123").exists()
+                .jsonPath("@.[1].accommodationId", "456").exists();
     }
 }

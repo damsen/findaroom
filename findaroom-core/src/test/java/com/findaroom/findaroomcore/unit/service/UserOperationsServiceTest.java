@@ -2,6 +2,7 @@ package com.findaroom.findaroomcore.unit.service;
 
 import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
 import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
 import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
@@ -24,6 +25,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.DONE;
@@ -41,10 +43,10 @@ public class UserOperationsServiceTest {
 
     @MockBean
     private BookingRepository bookingRepo;
-    
+
     @MockBean
     private ReviewRepository reviewRepo;
-    
+
     private UserOperationsService userOps;
 
     @BeforeAll
@@ -445,4 +447,21 @@ public class UserOperationsServiceTest {
                 .expectErrorMatches(PredicateUtils.unprocessableEntity())
                 .verify();
     }
+
+    @Test
+    public void findUserFavorites() {
+
+        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(PojoUtils.accommodation()));
+
+        var filter = new AccommodationSearchFilter();
+        Flux<Accommodation> favorites = userOps.findUserFavorites(List.of("123"), filter);
+
+        StepVerifier
+                .create(favorites)
+                .expectNextCount(1)
+                .verifyComplete();
+
+        assertThat(filter.getSelect().block()).contains("123");
+    }
+
 }

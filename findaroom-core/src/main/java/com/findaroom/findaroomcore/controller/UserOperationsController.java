@@ -4,6 +4,7 @@ import com.findaroom.findaroomcore.dto.BookAccommodation;
 import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import com.findaroom.findaroomcore.dto.ReviewAccommodation;
+import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
 import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
 import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
 import com.findaroom.findaroomcore.model.Accommodation;
@@ -80,5 +81,11 @@ public class UserOperationsController {
                                            @RequestBody @Valid BookingDates reschedule,
                                            @AuthenticationPrincipal Jwt jwt) {
         return userOps.rescheduleBooking(bookingId, jwt.getSubject(), reschedule);
+    }
+
+    @GetMapping("/my-favorites")
+    public Flux<Accommodation> getUserFavorites(AccommodationSearchFilter filter,
+                                                @AuthenticationPrincipal Jwt jwt) {
+        return userOps.findUserFavorites(jwt.getClaimAsStringList("favoriteAccommodations"), filter);
     }
 }

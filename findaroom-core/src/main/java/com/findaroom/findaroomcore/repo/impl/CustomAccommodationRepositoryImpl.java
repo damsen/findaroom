@@ -41,10 +41,11 @@ public class CustomAccommodationRepositoryImpl implements CustomAccommodationRep
         var cityFilter = filter.getCity().map(where("address.city")::is);
         var amenitiesFilter = filter.getAmenities().map(where("amenities")::all);
         var excludeFilter = filter.getExclude().map(where("accommodationId")::nin);
+        var selectFilter = filter.getSelect().map(where("accommodationId")::in);
         var boxFilter = filter.getGeoBox().map(where("address.location")::within);
 
         return Flux.merge(priceFilter, ratingFilter, guestsFilter, hostIdFilter, superHostFilter, typeFilter,
-                countryFilter, cityFilter, amenitiesFilter, excludeFilter, boxFilter);
+                countryFilter, cityFilter, amenitiesFilter, excludeFilter, selectFilter, boxFilter);
     }
 
 }

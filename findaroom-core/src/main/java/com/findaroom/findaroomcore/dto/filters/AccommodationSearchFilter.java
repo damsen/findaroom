@@ -32,6 +32,7 @@ public class AccommodationSearchFilter extends PagingAndSortingFilter {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     LocalDate checkout;
     List<String> exclude;
+    List<String> select;
     Double ne_lat;
     Double ne_lng;
     Double sw_lat;
@@ -99,6 +100,10 @@ public class AccommodationSearchFilter extends PagingAndSortingFilter {
 
     public Mono<List<String>> getExclude() {
         return Mono.justOrEmpty(exclude);
+    }
+
+    public Mono<List<String>> getSelect() {
+        return Mono.justOrEmpty(select);
     }
 
     public Mono<Double> getNe_lat() {

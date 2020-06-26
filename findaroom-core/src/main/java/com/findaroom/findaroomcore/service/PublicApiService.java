@@ -26,16 +26,13 @@ public class PublicApiService {
     private final ReviewRepository reviewRepo;
 
     public Flux<Accommodation> findAccommodationsByFilter(AccommodationSearchFilter filter) {
-
-        var bookedAccommodationIds = filter
+        return filter
                 .getBookingDates()
                 .map(BookingSearchFilter::new)
                 .flatMapMany(bookingRepo::findAllByFilter)
                 .map(Booking::getAccommodationId)
                 .distinct()
-                .collectList();
-
-        return bookedAccommodationIds
+                .collectList()
                 .doOnNext(filter::setExclude)
                 .then(Mono.just(filter))
                 .flatMapMany(accommodationRepo::findAllByFilter);

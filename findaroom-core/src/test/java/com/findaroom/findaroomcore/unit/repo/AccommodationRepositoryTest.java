@@ -264,6 +264,30 @@ public class AccommodationRepositoryTest {
     }
 
     @Test
+    public void findAllByFilter_withSelectFilter_shouldReturnFilteredResults() {
+
+        Accommodation acc1 = accommodation();
+        acc1.setAccommodationId("123");
+        Accommodation acc2 = accommodation();
+        acc2.setAccommodationId("456");
+        Accommodation acc3 = accommodation();
+        acc3.setAccommodationId("678");
+
+        var filter = new AccommodationSearchFilter();
+        filter.setSelect(List.of("123", "678"));
+
+        Flux<Accommodation> accommodations = repo
+                .saveAll(Flux.just(acc1, acc2, acc3))
+                .thenMany(repo.findAllByFilter(filter));
+
+        StepVerifier
+                .create(accommodations)
+                .assertNext(a -> assertThat(a.getAccommodationId()).isEqualTo("123"))
+                .assertNext(a -> assertThat(a.getAccommodationId()).isEqualTo("678"))
+                .verifyComplete();
+    }
+
+    @Test
     public void findAllByFilter_withBoxFilter_shouldReturnFilteredResults() {
 
         Accommodation acc1 = accommodation();
