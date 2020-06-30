@@ -15,7 +15,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
 
 @Data
 @Document(collection = "notifications")
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Notification {
 
