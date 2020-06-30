@@ -26,7 +26,11 @@ public class UserService {
         this.objectMapper = objectMapper;
     }
 
-    public User getById(String userId) {
+    public PublicUser getById(String userId) {
+        return PublicUser.from(oktaClient.getUser(userId));
+    }
+
+    public User getMe(String userId) {
         return oktaClient.getUser(userId);
     }
 

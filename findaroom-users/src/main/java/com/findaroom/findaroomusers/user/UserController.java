@@ -17,8 +17,13 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getById(@PathVariable String userId) {
+    public ResponseEntity<PublicUser> getById(@PathVariable String userId) {
         return ResponseEntity.ok(userService.getById(userId));
+    }
+
+    @GetMapping("/my-account")
+    public ResponseEntity<User> getMe(@AuthenticationPrincipal Jwt jwt) {
+        return ResponseEntity.ok(userService.getMe(jwt.getSubject()));
     }
 
     @PatchMapping("/my-account")
@@ -27,13 +32,13 @@ public class UserController {
         return ResponseEntity.ok(userService.update(jwt.getSubject(), userInfo));
     }
 
-    @PatchMapping("/my-favorites/add")
+    @PostMapping("/my-account/favorites")
     public ResponseEntity<User> addAccommodationToFavorites(@RequestParam String accommodationId,
                                                             @AuthenticationPrincipal Jwt jwt) {
         return ResponseEntity.ok(userService.addAccommodationToFavourites(jwt.getSubject(), accommodationId));
     }
 
-    @PatchMapping("/my-favorites/{accommodationId}/remove")
+    @DeleteMapping("/my-account/favorites/{accommodationId}")
     public ResponseEntity<User> removeAccommodationFromFavorites(@PathVariable String accommodationId,
                                                                  @AuthenticationPrincipal Jwt jwt) {
         return ResponseEntity.ok(userService.removeAccommodationFromFavourites(jwt.getSubject(), accommodationId));
