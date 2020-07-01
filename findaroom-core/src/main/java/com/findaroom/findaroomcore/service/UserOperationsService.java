@@ -110,21 +110,30 @@ public class UserOperationsService {
                 .flatMap(bookingRepo::save);
     }
 
-    public Mono<Booking> rescheduleBooking(String bookingId, String userId, BookingDates reschedule) {
-        return bookingRepo
+    public Mono<Booking> rescheduleBooking(String bookingId, String userId, BookingDates dates) {
+
+        var bookingById = bookingRepo
                 .findByBookingIdAndUserId(bookingId, userId)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND)))
                 .filter(Booking::isActive)
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
-                .filter(booking -> booking.hasDifferentDatesThan(reschedule))
+                .filter(booking -> booking.hasDifferentDatesThan(dates))
                 .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
-                .filterWhen(booking -> doesUserHaveBookingsBetweenDatesExcludingBooking(userId, booking.getBookingId(), reschedule)
-                        .map(hasBookings -> !hasBookings))
-                .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
-                .filterWhen(booking -> isAccommodationBookedExcludingBooking(booking.getAccommodationId(), booking.getBookingId(), reschedule)
-                        .map(alreadyBooked -> !alreadyBooked))
-                .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
-                .doOnNext(booking -> booking.rescheduleWith(reschedule))
+                .flatMap(booking -> accommodationRepo
+                        .findById(booking.getAccommodationId())
+                        .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND)))
+                        .filterWhen(accommodation -> isAccommodationBookedExcludingBooking(accommodation.getAccommodationId(), booking.getBookingId(), dates)
+                                .map(alreadyBooked -> !alreadyBooked))
+                        .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)))
+                        .thenReturn(booking));
+
+        var userHasBookingsBetweenDates = doesUserHaveBookingsBetweenDatesExcludingBooking(userId, bookingId, dates)
+                .filter(hasBookings -> !hasBookings)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(UNPROCESSABLE_ENTITY)));
+
+        return Mono.zip(bookingById, userHasBookingsBetweenDates)
+                .map(Tuple2::getT1)
+                .doOnNext(booking -> booking.rescheduleWith(dates))
                 .flatMap(bookingRepo::save);
     }
 

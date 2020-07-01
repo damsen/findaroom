@@ -360,7 +360,11 @@ public class UserOperationsServiceTest {
 
         Booking book = PojoUtils.booking();
         book.setBookingId("111");
+        book.setAccommodationId("123");
+        Accommodation acc = PojoUtils.accommodation();
+        acc.setAccommodationId("123");
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
         when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(0L));
         when(bookingRepo.countActiveAccommodationBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
@@ -383,6 +387,8 @@ public class UserOperationsServiceTest {
     public void rescheduleBooking_whenBookingNotFound_shouldReturnNotFound() {
 
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.empty());
+        when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
+                .thenReturn(Mono.just(0L));
 
         Mono<Booking> booking = userOps.rescheduleBooking("111", "444", PojoUtils.bookingDates());
 
@@ -399,6 +405,8 @@ public class UserOperationsServiceTest {
         book.setBookingId("111");
         book.setStatus(CANCELLED);
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
+                .thenReturn(Mono.just(0L));
 
         Mono<Booking> booking = userOps.rescheduleBooking("111", "444", PojoUtils.bookingDates());
 
@@ -418,6 +426,8 @@ public class UserOperationsServiceTest {
         book.setCheckin(checkin);
         book.setCheckout(checkout);
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
+                .thenReturn(Mono.just(0L));
 
         BookingDates reschedule = new BookingDates(checkin, checkout);
         Mono<Booking> booking = userOps.rescheduleBooking("111", "444", reschedule);
@@ -433,9 +443,15 @@ public class UserOperationsServiceTest {
 
         Booking book = PojoUtils.booking();
         book.setBookingId("111");
+        book.setAccommodationId("123");
+        Accommodation acc = PojoUtils.accommodation();
+        acc.setAccommodationId("123");
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
         when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(1L));
+        when(bookingRepo.countActiveAccommodationBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
+                .thenReturn(Mono.just(0L));
 
         Mono<Booking> booking = userOps.rescheduleBooking("111", "444", PojoUtils.bookingDates());
 
@@ -446,11 +462,34 @@ public class UserOperationsServiceTest {
     }
 
     @Test
+    public void rescheduleBooking_whenAccommodationNotFound_shouldReturnNotFound() {
+
+        Booking book = PojoUtils.booking();
+        book.setBookingId("111");
+        book.setAccommodationId("123");
+        when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.empty());
+        when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
+                .thenReturn(Mono.just(0L));
+
+        Mono<Booking> booking = userOps.rescheduleBooking("111", "444", PojoUtils.bookingDates());
+
+        StepVerifier
+                .create(booking)
+                .expectErrorMatches(PredicateUtils.notFound())
+                .verify();
+    }
+
+    @Test
     public void rescheduleBooking_whenAccommodationIsBooked_shouldReturnUnprocessableEntity() {
 
         Booking book = PojoUtils.booking();
         book.setBookingId("111");
+        book.setAccommodationId("123");
+        Accommodation acc = PojoUtils.accommodation();
+        acc.setAccommodationId("123");
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
         when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(0L));
         when(bookingRepo.countActiveAccommodationBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
