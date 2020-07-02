@@ -9,12 +9,16 @@ import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
+import com.findaroom.findaroomcore.utils.ErrorUtils;
+import com.findaroom.findaroomcore.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import static com.findaroom.findaroomcore.utils.ErrorUtils.*;
+import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -41,13 +45,13 @@ public class PublicApiService {
     public Mono<Accommodation> findAccommodationById(String accommodationId) {
         return accommodationRepo
                 .findById(accommodationId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND)));
+                .switchIfEmpty(Mono.error(notFound(ACCOMMODATION_NOT_FOUND)));
     }
 
     public Flux<Review> findAccommodationReviewsByFilter(String accommodationId, ReviewSearchFilter filter) {
         return accommodationRepo
                 .findById(accommodationId)
-                .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND)))
+                .switchIfEmpty(Mono.error(notFound(ACCOMMODATION_NOT_FOUND)))
                 .doOnNext(accommodation -> filter.setAccommodationId(accommodation.getAccommodationId()))
                 .then(Mono.just(filter))
                 .flatMapMany(reviewRepo::findAllByFilter);

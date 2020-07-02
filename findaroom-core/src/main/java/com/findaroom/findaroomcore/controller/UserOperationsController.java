@@ -21,6 +21,8 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
+import static org.springframework.http.HttpStatus.*;
+
 @RestController
 @RequestMapping("/api/v1/user-ops")
 @RequiredArgsConstructor
@@ -53,14 +55,14 @@ public class UserOperationsController {
     }
 
     @PostMapping(value = "/accommodations")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     public Mono<Accommodation> saveAccommodation(@RequestBody @Valid CreateAccommodation create,
                                                  @AuthenticationPrincipal Jwt jwt) {
         return userOps.saveAccommodation(jwt.getSubject(), jwt.getClaimAsBoolean("superHost"), create);
     }
 
     @PostMapping("/accommodations/{accommodationId}/bookings")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     public Mono<Booking> bookAccommodation(@PathVariable String accommodationId,
                                            @RequestBody @Valid BookAccommodation book,
                                            @AuthenticationPrincipal Jwt jwt) {
@@ -68,7 +70,7 @@ public class UserOperationsController {
     }
 
     @PostMapping("/accommodations/{accommodationId}/reviews")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(CREATED)
     public Mono<Review> reviewAccommodation(@PathVariable String accommodationId,
                                             @RequestParam String bookingId,
                                             @RequestBody @Valid ReviewAccommodation review,

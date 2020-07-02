@@ -12,6 +12,9 @@ import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
 import com.findaroom.findaroomcore.service.UserOperationsService;
+import com.findaroom.findaroomcore.service.verifier.AccommodationVerifier;
+import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
+import com.findaroom.findaroomcore.utils.ErrorUtils;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import com.findaroom.findaroomcore.utils.PredicateUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -29,9 +32,9 @@ import java.util.List;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.DONE;
+import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
@@ -47,11 +50,17 @@ public class UserOperationsServiceTest {
     @MockBean
     private ReviewRepository reviewRepo;
 
+    @MockBean
+    private AccommodationVerifier accommodationVerifier;
+
+    @MockBean
+    private BookingVerifier bookingVerifier;
+
     private UserOperationsService userOps;
 
     @BeforeAll
     public void setup() {
-        userOps = new UserOperationsService(accommodationRepo, bookingRepo, reviewRepo);
+        userOps = new UserOperationsService(accommodationRepo, bookingRepo, reviewRepo, accommodationVerifier, bookingVerifier);
     }
 
     @Test
@@ -124,7 +133,7 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(BOOKING_NOT_FOUND))
                 .verify();
     }
 
@@ -144,9 +153,12 @@ public class UserOperationsServiceTest {
     @Test
     public void bookAccommodation() {
 
-        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        Accommodation acc = PojoUtils.accommodation();
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyUserIsNotAccommodationHost(any(), anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyGuestsDoNotExceedCapacity(any(), anyInt())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyAccommodationIsAvailable(any(), any())).thenReturn(Mono.just(acc));
         when(bookingRepo.countActiveUserBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
         when(bookingRepo.save(any())).thenReturn(Mono.just(PojoUtils.booking()));
 
         Mono<Booking> booking = userOps.bookAccommodation("123", "444", PojoUtils.bookAccommodation());
@@ -162,13 +174,12 @@ public class UserOperationsServiceTest {
 
         when(accommodationRepo.findById(anyString())).thenReturn(Mono.empty());
         when(bookingRepo.countActiveUserBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
 
         Mono<Booking> booking = userOps.bookAccommodation("123", "444", PojoUtils.bookAccommodation());
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
@@ -178,14 +189,15 @@ public class UserOperationsServiceTest {
         Accommodation acc = PojoUtils.accommodation();
         acc.getHost().setHostId("444");
         when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyUserIsNotAccommodationHost(any(), anyString()))
+                .thenReturn(Mono.error(ErrorUtils.unprocessableEntity(USER_IS_ACCOMMODATION_HOST)));
         when(bookingRepo.countActiveUserBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
 
         Mono<Booking> booking = userOps.bookAccommodation("123", "444", PojoUtils.bookAccommodation());
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(USER_IS_ACCOMMODATION_HOST))
                 .verify();
     }
 
@@ -195,8 +207,10 @@ public class UserOperationsServiceTest {
         Accommodation acc = PojoUtils.accommodation();
         acc.setMaxGuests(2);
         when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyUserIsNotAccommodationHost(any(), anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyGuestsDoNotExceedCapacity(any(), anyInt()))
+                .thenReturn(Mono.error(ErrorUtils.unprocessableEntity(ACCOMMODATION_MAX_GUESTS_EXCEEDED)));
         when(bookingRepo.countActiveUserBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
 
         BookAccommodation book = PojoUtils.bookAccommodation();
         book.setGuests(5);
@@ -204,37 +218,44 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
-                .verify();
-    }
-
-    @Test
-    public void bookAccommodation_whenUserAlreadyHasBookingsBetweenDates_shouldReturnUnprocessableEntity() {
-
-        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
-        when(bookingRepo.countActiveUserBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(1L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
-
-        Mono<Booking> booking = userOps.bookAccommodation("123", "444", PojoUtils.bookAccommodation());
-
-        StepVerifier
-                .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(ACCOMMODATION_MAX_GUESTS_EXCEEDED))
                 .verify();
     }
 
     @Test
     public void bookAccommodation_whenAccommodationIsBooked_shouldReturnUnprocessableEntity() {
 
-        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        Accommodation acc = PojoUtils.accommodation();
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyUserIsNotAccommodationHost(any(), anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyGuestsDoNotExceedCapacity(any(), anyInt())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyAccommodationIsAvailable(any(), any()))
+                .thenReturn(Mono.error(ErrorUtils.unprocessableEntity(ACCOMMODATION_ALREADY_BOOKED)));
         when(bookingRepo.countActiveUserBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(0L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(1L));
 
         Mono<Booking> booking = userOps.bookAccommodation("123", "444", PojoUtils.bookAccommodation());
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(ACCOMMODATION_ALREADY_BOOKED))
+                .verify();
+    }
+
+    @Test
+    public void bookAccommodation_whenUserAlreadyHasBookingsBetweenDates_shouldReturnUnprocessableEntity() {
+
+        Accommodation acc = PojoUtils.accommodation();
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyUserIsNotAccommodationHost(any(), anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyGuestsDoNotExceedCapacity(any(), anyInt())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyAccommodationIsAvailable(any(), any())).thenReturn(Mono.just(acc));
+        when(bookingRepo.countActiveUserBookingsBetweenDates(anyString(), any(), any(), any())).thenReturn(Mono.just(1L));
+
+        Mono<Booking> booking = userOps.bookAccommodation("123", "444", PojoUtils.bookAccommodation());
+
+        StepVerifier
+                .create(booking)
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(USER_HAS_BOOKINGS_BETWEEN_DATES))
                 .verify();
     }
 
@@ -252,6 +273,7 @@ public class UserOperationsServiceTest {
         rev2.setRating(2.0);
         when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
         when(bookingRepo.findByBookingIdAndAccommodationIdAndUserId(anyString(), anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsCompleted(any())).thenReturn(Mono.just(book));
         when(reviewRepo.save(any())).thenReturn(Mono.just(PojoUtils.review()));
         when(reviewRepo.findAllByFilter(any())).thenReturn(Flux.just(rev1, rev2));
         when(accommodationRepo.save(any())).thenReturn(Mono.just(acc));
@@ -280,7 +302,7 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(review)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
@@ -294,7 +316,7 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(review)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(BOOKING_NOT_FOUND))
                 .verify();
     }
 
@@ -303,12 +325,13 @@ public class UserOperationsServiceTest {
 
         when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
         when(bookingRepo.findByBookingIdAndAccommodationIdAndUserId(anyString(), anyString(), anyString())).thenReturn(Mono.just(PojoUtils.booking()));
+        when(bookingVerifier.verifyBookingIsCompleted(any())).thenReturn(Mono.error(ErrorUtils.unprocessableEntity(BOOKING_NOT_COMPLETED)));
 
         Mono<Review> review = userOps.reviewAccommodation("123", "111", "444", PojoUtils.reviewAccommodation());
 
         StepVerifier
                 .create(review)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_NOT_COMPLETED))
                 .verify();
     }
 
@@ -317,6 +340,7 @@ public class UserOperationsServiceTest {
 
         Booking book = PojoUtils.booking();
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.just(book));
         when(bookingRepo.save(any())).thenReturn(Mono.just(book));
 
         Mono<Booking> booking = userOps.cancelBooking("111", "444");
@@ -336,7 +360,7 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(BOOKING_NOT_FOUND))
                 .verify();
     }
 
@@ -346,12 +370,13 @@ public class UserOperationsServiceTest {
         Booking book = PojoUtils.booking();
         book.setStatus(DONE);
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.error(ErrorUtils.unprocessableEntity(BOOKING_NOT_ACTIVE)));
 
         Mono<Booking> booking = userOps.cancelBooking("111", "444");
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_NOT_ACTIVE))
                 .verify();
     }
 
@@ -364,10 +389,11 @@ public class UserOperationsServiceTest {
         Accommodation acc = PojoUtils.accommodation();
         acc.setAccommodationId("123");
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingHasDifferentDatesThan(any(), any())).thenReturn(Mono.just(book));
         when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyAccommodationIsAvailableExcludingBooking(any(), anyString(), any())).thenReturn(Mono.just(acc));
         when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
-                .thenReturn(Mono.just(0L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(0L));
         when(bookingRepo.save(any())).thenReturn(Mono.just(book));
 
@@ -394,7 +420,7 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(BOOKING_NOT_FOUND))
                 .verify();
     }
 
@@ -405,6 +431,7 @@ public class UserOperationsServiceTest {
         book.setBookingId("111");
         book.setStatus(CANCELLED);
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.error(ErrorUtils.unprocessableEntity(BOOKING_NOT_ACTIVE)));
         when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(0L));
 
@@ -412,7 +439,7 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_NOT_ACTIVE))
                 .verify();
     }
 
@@ -426,6 +453,9 @@ public class UserOperationsServiceTest {
         book.setCheckin(checkin);
         book.setCheckout(checkout);
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingHasDifferentDatesThan(any(), any()))
+                .thenReturn(Mono.error(ErrorUtils.unprocessableEntity(BOOKING_DATES_SAME_AS_RESCHEDULE_DATES)));
         when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(0L));
 
@@ -434,30 +464,7 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
-                .verify();
-    }
-
-    @Test
-    public void rescheduleBooking_whenUserAlreadyHasBookingsBetweenDates_shouldReturnUnprocessableEntity() {
-
-        Booking book = PojoUtils.booking();
-        book.setBookingId("111");
-        book.setAccommodationId("123");
-        Accommodation acc = PojoUtils.accommodation();
-        acc.setAccommodationId("123");
-        when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
-        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
-        when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
-                .thenReturn(Mono.just(1L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
-                .thenReturn(Mono.just(0L));
-
-        Mono<Booking> booking = userOps.rescheduleBooking("111", "444", PojoUtils.bookingDates());
-
-        StepVerifier
-                .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_DATES_SAME_AS_RESCHEDULE_DATES))
                 .verify();
     }
 
@@ -468,6 +475,8 @@ public class UserOperationsServiceTest {
         book.setBookingId("111");
         book.setAccommodationId("123");
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingHasDifferentDatesThan(any(), any())).thenReturn(Mono.just(book));
         when(accommodationRepo.findById(anyString())).thenReturn(Mono.empty());
         when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(0L));
@@ -476,7 +485,7 @@ public class UserOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
@@ -489,17 +498,43 @@ public class UserOperationsServiceTest {
         Accommodation acc = PojoUtils.accommodation();
         acc.setAccommodationId("123");
         when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingHasDifferentDatesThan(any(), any())).thenReturn(Mono.just(book));
         when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyAccommodationIsAvailableExcludingBooking(any(), anyString(), any()))
+                .thenReturn(Mono.error(ErrorUtils.unprocessableEntity(ACCOMMODATION_ALREADY_BOOKED)));
         when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(0L));
-        when(bookingRepo.countActiveAccommodationBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
+
+        Mono<Booking> booking = userOps.rescheduleBooking("111", "444", PojoUtils.bookingDates());
+
+        StepVerifier
+                .create(booking)
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(ACCOMMODATION_ALREADY_BOOKED))
+                .verify();
+    }
+
+    @Test
+    public void rescheduleBooking_whenUserAlreadyHasBookingsBetweenDates_shouldReturnUnprocessableEntity() {
+
+        Booking book = PojoUtils.booking();
+        book.setBookingId("111");
+        book.setAccommodationId("123");
+        Accommodation acc = PojoUtils.accommodation();
+        acc.setAccommodationId("123");
+        when(bookingRepo.findByBookingIdAndUserId(anyString(), anyString())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.just(book));
+        when(bookingVerifier.verifyBookingHasDifferentDatesThan(any(), any())).thenReturn(Mono.just(book));
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(acc));
+        when(accommodationVerifier.verifyAccommodationIsAvailableExcludingBooking(any(), anyString(), any())).thenReturn(Mono.just(acc));
+        when(bookingRepo.countActiveUserBookingsBetweenDatesExcludingBooking(anyString(), anyString(), any(), any(), any()))
                 .thenReturn(Mono.just(1L));
 
         Mono<Booking> booking = userOps.rescheduleBooking("111", "444", PojoUtils.bookingDates());
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity())
+                .expectErrorMatches(PredicateUtils.unprocessableEntity(USER_HAS_BOOKINGS_BETWEEN_DATES))
                 .verify();
     }
 

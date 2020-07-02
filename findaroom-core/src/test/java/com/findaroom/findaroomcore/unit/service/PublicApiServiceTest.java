@@ -23,6 +23,7 @@ import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
 
+import static com.findaroom.findaroomcore.utils.MessageUtils.ACCOMMODATION_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -112,7 +113,7 @@ public class PublicApiServiceTest {
 
         StepVerifier
                 .create(accommodation)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
@@ -139,7 +140,7 @@ public class PublicApiServiceTest {
 
         StepVerifier
                 .create(reviews)
-                .expectErrorMatches(PredicateUtils.notFound())
+                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
