@@ -20,6 +20,7 @@ import reactor.core.publisher.Flux;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.DONE;
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.PENDING;
+import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
@@ -180,7 +181,9 @@ public class HostOperationsIntegrationTest {
                 .patch()
                 .uri("/api/v1/host-ops/my-accommodations/{accommodationId}/bookings/{bookingId}/confirm", "123", "111")
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", BOOKING_NOT_PENDING).exists();
     }
 
     @Test
@@ -234,7 +237,9 @@ public class HostOperationsIntegrationTest {
                 .patch()
                 .uri("/api/v1/host-ops/my-accommodations/{accommodationId}/bookings/{bookingId}/cancel", "123", "111")
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", BOOKING_NOT_ACTIVE).exists();
     }
 
     @Test
@@ -293,6 +298,8 @@ public class HostOperationsIntegrationTest {
                 .patch()
                 .uri("/api/v1/host-ops/my-accommodations/{accommodationId}/unlist", "123")
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", ACCOMMODATION_ALREADY_UNLISTED).exists();
     }
 }

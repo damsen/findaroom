@@ -9,6 +9,7 @@ import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
+import com.findaroom.findaroomcore.utils.MessageUtils;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import reactor.core.publisher.Flux;
 import java.time.LocalDate;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.*;
+import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
@@ -204,7 +206,9 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(PojoUtils.bookAccommodation())
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", USER_IS_ACCOMMODATION_HOST).exists();
     }
 
     @Test
@@ -226,7 +230,9 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(bookAcc)
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", ACCOMMODATION_MAX_GUESTS_EXCEEDED).exists();
     }
 
     @Test
@@ -253,7 +259,9 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(bookAcc)
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", USER_HAS_BOOKINGS_BETWEEN_DATES).exists();
     }
 
     @Test
@@ -280,7 +288,9 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(bookAcc)
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", ACCOMMODATION_ALREADY_BOOKED).exists();
     }
 
     @Test
@@ -324,7 +334,7 @@ public class UserOperationsIntegrationTest {
     }
 
     @Test
-    public void reviewAccommodation_whenBookingNotComplete_shouldReturnUnprocessableEntity() {
+    public void reviewAccommodation_whenBookingNotCompleted_shouldReturnUnprocessableEntity() {
 
         Accommodation acc = PojoUtils.accommodation();
         acc.setAccommodationId("123");
@@ -348,7 +358,9 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(PojoUtils.reviewAccommodation())
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", BOOKING_NOT_COMPLETED).exists();
     }
 
     @Test
@@ -401,7 +413,9 @@ public class UserOperationsIntegrationTest {
                 .patch()
                 .uri("/api/v1/user-ops/my-bookings/{bookingId}/cancel", "111")
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", BOOKING_NOT_ACTIVE).exists();
     }
 
     @Test
@@ -470,7 +484,9 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(reschedule)
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", BOOKING_NOT_ACTIVE).exists();
     }
 
     @Test
@@ -500,7 +516,9 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(reschedule)
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", BOOKING_DATES_SAME_AS_RESCHEDULE_DATES).exists();
     }
 
     @Test
@@ -535,7 +553,9 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(reschedule)
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", USER_HAS_BOOKINGS_BETWEEN_DATES).exists();
     }
 
     @Test
@@ -569,6 +589,8 @@ public class UserOperationsIntegrationTest {
                 .contentType(APPLICATION_JSON)
                 .bodyValue(reschedule)
                 .exchange()
-                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY);
+                .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
+                .expectBody()
+                .jsonPath("@.message", ACCOMMODATION_ALREADY_BOOKED).exists();
     }
 }
