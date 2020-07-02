@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 
+import static com.findaroom.findaroomnotifications.notification.NotificationController.NOTIFICATION_NOT_FOUND;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.http.MediaType.APPLICATION_STREAM_JSON;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
@@ -87,7 +88,9 @@ public class NotificationsIntegrationTest {
                 .get()
                 .uri("/api/v1/notifications/{notificationId}", "123")
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("@.message", NOTIFICATION_NOT_FOUND).exists();
     }
 
     @Test
@@ -128,6 +131,8 @@ public class NotificationsIntegrationTest {
                 .get()
                 .uri("/api/v1/notifications/{notificationId}", "123")
                 .exchange()
-                .expectStatus().isNotFound();
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("@.message", NOTIFICATION_NOT_FOUND).exists();
     }
 }

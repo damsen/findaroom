@@ -17,6 +17,8 @@ import static org.springframework.http.HttpStatus.*;
 @RequiredArgsConstructor
 public class NotificationController {
 
+    public static final String NOTIFICATION_NOT_FOUND = "Notification not found.";
+
     private final NotificationRepo notificationRepo;
 
     @GetMapping(produces = "application/stream+json")
@@ -29,7 +31,7 @@ public class NotificationController {
                                                       @AuthenticationPrincipal Jwt jwt) {
         return notificationRepo
                 .findByNotificationIdAndUserId(notificationId, jwt.getSubject())
-                .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND)))
+                .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND, NOTIFICATION_NOT_FOUND)))
                 .doOnNext(notification -> notification.setSeen(true))
                 .flatMap(notificationRepo::save);
     }
