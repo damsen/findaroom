@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 
 import static com.findaroom.findaroomcore.utils.PojoUtils.accommodation;
 import static com.findaroom.findaroomcore.utils.PojoUtils.review;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -46,6 +47,7 @@ public class PublicApiControllerTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
+                .jsonPath("@").value(hasSize(2))
                 .jsonPath("@.[0]").isNotEmpty()
                 .jsonPath("@.[1]").isNotEmpty();
     }

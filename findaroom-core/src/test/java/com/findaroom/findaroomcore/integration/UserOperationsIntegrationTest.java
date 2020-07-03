@@ -9,7 +9,6 @@ import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
-import com.findaroom.findaroomcore.utils.MessageUtils;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,9 +21,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.*;
 import static com.findaroom.findaroomcore.utils.MessageUtils.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
@@ -108,7 +109,9 @@ public class UserOperationsIntegrationTest {
         acc3.setAccommodationId("789");
         accommodationRepo.saveAll(Flux.just(acc1, acc2, acc3)).blockLast();
 
-        var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
+        var jwtMutator = mockJwt().jwt(jwt -> jwt
+                .claim("sub", "andrea_damiani@protonmail.com")
+                .claim("favoriteAccommodations", List.of("123", "456")));
 
         webTestClient
                 .mutateWith(jwtMutator)
@@ -118,6 +121,7 @@ public class UserOperationsIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
+                .jsonPath("@").value(hasSize(2))
                 .jsonPath("@.[0].accommodationId", "123").exists()
                 .jsonPath("@.[1].accommodationId", "456").exists();
     }

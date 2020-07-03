@@ -12,7 +12,6 @@ import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.service.UserOperationsService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +20,7 @@ import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
 @RequestMapping("/api/v1/user-ops")
@@ -54,7 +53,7 @@ public class UserOperationsController {
         return userOps.findUserBookingById(bookingId, jwt.getSubject());
     }
 
-    @PostMapping(value = "/accommodations")
+    @PostMapping("/accommodations")
     @ResponseStatus(CREATED)
     public Mono<Accommodation> saveAccommodation(@RequestBody @Valid CreateAccommodation create,
                                                  @AuthenticationPrincipal Jwt jwt) {

@@ -16,7 +16,7 @@ import reactor.test.StepVerifier;
 
 import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

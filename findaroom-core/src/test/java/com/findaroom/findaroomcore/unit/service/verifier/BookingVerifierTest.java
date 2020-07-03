@@ -4,7 +4,6 @@ import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.enums.BookingStatus;
 import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
-import com.findaroom.findaroomcore.utils.MessageUtils;
 import com.findaroom.findaroomcore.utils.PojoUtils;
 import com.findaroom.findaroomcore.utils.PredicateUtils;
 import org.junit.jupiter.api.BeforeAll;

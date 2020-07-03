@@ -26,7 +26,8 @@ import java.util.stream.Collectors;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.activeStates;
-import static com.findaroom.findaroomcore.utils.ErrorUtils.*;
+import static com.findaroom.findaroomcore.utils.ErrorUtils.notFound;
+import static com.findaroom.findaroomcore.utils.ErrorUtils.unprocessableEntity;
 import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 
 @Service

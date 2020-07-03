@@ -12,7 +12,6 @@ import com.findaroom.findaroomcore.service.verifier.AccommodationVerifier;
 import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -26,7 +25,6 @@ import static com.findaroom.findaroomcore.model.enums.BookingStatus.CONFIRMED;
 import static com.findaroom.findaroomcore.utils.ErrorUtils.notFound;
 import static com.findaroom.findaroomcore.utils.MessageUtils.ACCOMMODATION_NOT_FOUND;
 import static com.findaroom.findaroomcore.utils.MessageUtils.BOOKING_NOT_FOUND;
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @Service
 @RequiredArgsConstructor

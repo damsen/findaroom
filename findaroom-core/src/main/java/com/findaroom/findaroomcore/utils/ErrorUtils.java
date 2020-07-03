@@ -7,8 +7,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.function.Supplier;
 
-import static com.findaroom.findaroomcore.utils.MessageUtils.ACCOMMODATION_NOT_FOUND;
-import static com.findaroom.findaroomcore.utils.MessageUtils.USER_HAS_BOOKINGS_BETWEEN_DATES;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
