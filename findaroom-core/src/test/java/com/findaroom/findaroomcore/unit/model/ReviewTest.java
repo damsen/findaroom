@@ -4,7 +4,7 @@ import com.findaroom.findaroomcore.dto.ReviewAccommodation;
 import com.findaroom.findaroomcore.model.Review;
 import org.junit.jupiter.api.Test;
 
-import static com.findaroom.findaroomcore.utils.PojoUtils.reviewAccommodation;
+import static com.findaroom.findaroomcore.utils.TestPojos.reviewAccommodation;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ReviewTest {

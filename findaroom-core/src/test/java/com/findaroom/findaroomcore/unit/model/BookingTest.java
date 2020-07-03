@@ -6,7 +6,7 @@ import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.enums.BookingStatus;
 import org.junit.jupiter.api.Test;
 
-import static com.findaroom.findaroomcore.utils.PojoUtils.*;
+import static com.findaroom.findaroomcore.utils.TestPojos.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BookingTest {

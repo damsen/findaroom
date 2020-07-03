@@ -10,7 +10,7 @@ import com.findaroom.findaroomcore.model.Accommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.service.UserOperationsService;
-import com.findaroom.findaroomcore.utils.PojoUtils;
+import com.findaroom.findaroomcore.utils.TestPojos;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -43,7 +43,7 @@ public class UserOperationsControllerTest {
     @Test
     public void getUserBookings() {
 
-        when(userOps.findBookingsByUserId(anyString(), any())).thenReturn(Flux.just(PojoUtils.booking()));
+        when(userOps.findBookingsByUserId(anyString(), any())).thenReturn(Flux.just(TestPojos.booking()));
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
@@ -60,7 +60,7 @@ public class UserOperationsControllerTest {
     @Test
     public void getUserReviews() {
 
-        when(userOps.findReviewsByUserId(anyString(), any())).thenReturn(Flux.just(PojoUtils.review()));
+        when(userOps.findReviewsByUserId(anyString(), any())).thenReturn(Flux.just(TestPojos.review()));
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
@@ -77,7 +77,7 @@ public class UserOperationsControllerTest {
     @Test
     public void getUserFavorites() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         when(userOps.findUserFavorites(any(), any())).thenReturn(Flux.just(acc));
 
@@ -98,7 +98,7 @@ public class UserOperationsControllerTest {
     @Test
     public void getUserBookingById() {
 
-        when(userOps.findUserBookingById(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.booking()));
+        when(userOps.findUserBookingById(anyString(), anyString())).thenReturn(Mono.just(TestPojos.booking()));
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
@@ -116,7 +116,7 @@ public class UserOperationsControllerTest {
     @Test
     public void saveAccommodation() {
 
-        when(userOps.saveAccommodation(anyString(), anyBoolean(), any())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(userOps.saveAccommodation(anyString(), anyBoolean(), any())).thenReturn(Mono.just(TestPojos.accommodation()));
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt
                 .claim("sub", "andrea_damiani@protonmail.com")
@@ -127,7 +127,7 @@ public class UserOperationsControllerTest {
                 .post()
                 .uri("/api/v1/user-ops/accommodations")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.createAccommodation())
+                .bodyValue(TestPojos.createAccommodation())
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
@@ -153,7 +153,7 @@ public class UserOperationsControllerTest {
     @Test
     public void bookAccommodation() {
 
-        when(userOps.bookAccommodation(anyString(), anyString(), any())).thenReturn(Mono.just(PojoUtils.booking()));
+        when(userOps.bookAccommodation(anyString(), anyString(), any())).thenReturn(Mono.just(TestPojos.booking()));
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
@@ -162,7 +162,7 @@ public class UserOperationsControllerTest {
                 .post()
                 .uri("/api/v1/user-ops/accommodations/{accommodationId}/bookings", "123")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.bookAccommodation())
+                .bodyValue(TestPojos.bookAccommodation())
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
@@ -188,7 +188,7 @@ public class UserOperationsControllerTest {
     @Test
     public void reviewAccommodation() {
 
-        when(userOps.reviewAccommodation(anyString(), anyString(), anyString(), any())).thenReturn(Mono.just(PojoUtils.review()));
+        when(userOps.reviewAccommodation(anyString(), anyString(), anyString(), any())).thenReturn(Mono.just(TestPojos.review()));
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
@@ -200,7 +200,7 @@ public class UserOperationsControllerTest {
                         .queryParam("bookingId", "111")
                         .build("123"))
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.reviewAccommodation())
+                .bodyValue(TestPojos.reviewAccommodation())
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
@@ -229,7 +229,7 @@ public class UserOperationsControllerTest {
     @Test
     public void cancelBooking() {
 
-        when(userOps.cancelBooking(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.booking()));
+        when(userOps.cancelBooking(anyString(), anyString())).thenReturn(Mono.just(TestPojos.booking()));
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
@@ -247,7 +247,7 @@ public class UserOperationsControllerTest {
     @Test
     public void rescheduleBooking() {
 
-        when(userOps.rescheduleBooking(anyString(), anyString(), any())).thenReturn(Mono.just(PojoUtils.booking()));
+        when(userOps.rescheduleBooking(anyString(), anyString(), any())).thenReturn(Mono.just(TestPojos.booking()));
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
@@ -256,7 +256,7 @@ public class UserOperationsControllerTest {
                 .patch()
                 .uri("/api/v1/user-ops/my-bookings/{bookingId}/reschedule", "123", "111")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.bookingDates())
+                .bodyValue(TestPojos.bookingDates())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)

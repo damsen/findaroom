@@ -5,7 +5,7 @@ import com.findaroom.findaroomcore.controller.HostOperationsController;
 import com.findaroom.findaroomcore.dto.UpdateAccommodation;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.service.HostOperationsService;
-import com.findaroom.findaroomcore.utils.PojoUtils;
+import com.findaroom.findaroomcore.utils.TestPojos;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -40,7 +40,7 @@ public class HostOperationsControllerTest {
     @Test
     public void getHostAccommodations() {
 
-        when(hostOps.findAccommodationsByHostId(anyString(), any())).thenReturn(Flux.just(PojoUtils.accommodation()));
+        when(hostOps.findAccommodationsByHostId(anyString(), any())).thenReturn(Flux.just(TestPojos.accommodation()));
 
         var jwtMutator = mockJwt().authorities(new SimpleGrantedAuthority("host"));
 
@@ -70,7 +70,7 @@ public class HostOperationsControllerTest {
     @Test
     public void getAccommodationBookings() {
 
-        when(hostOps.findAccommodationBookingsByFilter(anyString(), anyString(), any())).thenReturn(Flux.just(PojoUtils.booking(), PojoUtils.booking()));
+        when(hostOps.findAccommodationBookingsByFilter(anyString(), anyString(), any())).thenReturn(Flux.just(TestPojos.booking(), TestPojos.booking()));
 
         var jwtMutator = mockJwt().authorities(new SimpleGrantedAuthority("host"));
 
@@ -98,7 +98,7 @@ public class HostOperationsControllerTest {
     @Test
     public void updateAccommodation() {
 
-        when(hostOps.updateAccommodation(anyString(), anyString(), any())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(hostOps.updateAccommodation(anyString(), anyString(), any())).thenReturn(Mono.just(TestPojos.accommodation()));
 
         var jwtMutator = mockJwt().authorities(new SimpleGrantedAuthority("host"));
 
@@ -107,7 +107,7 @@ public class HostOperationsControllerTest {
                 .patch()
                 .uri("/api/v1/host-ops/my-accommodations/{accommodationId}", "123")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.updateAccommodation())
+                .bodyValue(TestPojos.updateAccommodation())
                 .exchange()
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
@@ -138,7 +138,7 @@ public class HostOperationsControllerTest {
                 .patch()
                 .uri("/api/v1/host-ops/my-accommodations/{accommodationId}", "123")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.updateAccommodation())
+                .bodyValue(TestPojos.updateAccommodation())
                 .exchange()
                 .expectStatus().isForbidden();
     }
@@ -146,7 +146,7 @@ public class HostOperationsControllerTest {
     @Test
     public void confirmBooking() {
 
-        when(hostOps.confirmBooking(anyString(), anyString(), anyString())).thenReturn(Mono.just(PojoUtils.booking()));
+        when(hostOps.confirmBooking(anyString(), anyString(), anyString())).thenReturn(Mono.just(TestPojos.booking()));
 
         var jwtMutator = mockJwt().authorities(new SimpleGrantedAuthority("host"));
 
@@ -175,7 +175,7 @@ public class HostOperationsControllerTest {
     @Test
     public void cancelBooking() {
 
-        when(hostOps.cancelBooking(anyString(), anyString(), anyString())).thenReturn(Mono.just(PojoUtils.booking()));
+        when(hostOps.cancelBooking(anyString(), anyString(), anyString())).thenReturn(Mono.just(TestPojos.booking()));
 
         var jwtMutator = mockJwt().authorities(new SimpleGrantedAuthority("host"));
 
@@ -204,7 +204,7 @@ public class HostOperationsControllerTest {
     @Test
     public void unlistAccommodation() {
 
-        when(hostOps.unlistAccommodation(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(hostOps.unlistAccommodation(anyString(), anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
 
         var jwtMutator = mockJwt().authorities(new SimpleGrantedAuthority("host"));
 

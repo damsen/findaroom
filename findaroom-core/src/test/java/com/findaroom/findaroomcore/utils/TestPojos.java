@@ -12,7 +12,7 @@ import static com.findaroom.findaroomcore.model.enums.AccommodationType.WHOLE_AP
 import static com.findaroom.findaroomcore.model.enums.AccommodationType.WHOLE_LOFT;
 import static com.findaroom.findaroomcore.model.enums.Amenity.*;
 
-public class PojoUtils {
+public class TestPojos {
 
     public static Accommodation accommodation() {
         return Accommodation.of("name", "desc", 100.0, 4, 1, 1, 2, host(), WHOLE_APARTMENT, address(), List.of(WIFI, KITCHEN));

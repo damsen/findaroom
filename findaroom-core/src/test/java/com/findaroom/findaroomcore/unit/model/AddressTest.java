@@ -4,7 +4,7 @@ import com.findaroom.findaroomcore.dto.CreateAccommodation;
 import com.findaroom.findaroomcore.model.Address;
 import org.junit.jupiter.api.Test;
 
-import static com.findaroom.findaroomcore.utils.PojoUtils.createAddress;
+import static com.findaroom.findaroomcore.utils.TestPojos.createAddress;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AddressTest {

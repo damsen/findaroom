@@ -20,7 +20,7 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.*;
-import static com.findaroom.findaroomcore.utils.PojoUtils.booking;
+import static com.findaroom.findaroomcore.utils.TestPojos.booking;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest

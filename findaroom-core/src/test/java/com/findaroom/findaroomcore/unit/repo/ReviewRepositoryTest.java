@@ -13,7 +13,7 @@ import reactor.test.StepVerifier;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static com.findaroom.findaroomcore.utils.PojoUtils.review;
+import static com.findaroom.findaroomcore.utils.TestPojos.review;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest

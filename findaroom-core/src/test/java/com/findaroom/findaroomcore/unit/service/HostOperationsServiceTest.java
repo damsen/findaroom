@@ -10,8 +10,8 @@ import com.findaroom.findaroomcore.service.HostOperationsService;
 import com.findaroom.findaroomcore.service.verifier.AccommodationVerifier;
 import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
 import com.findaroom.findaroomcore.utils.ErrorUtils;
-import com.findaroom.findaroomcore.utils.PojoUtils;
-import com.findaroom.findaroomcore.utils.PredicateUtils;
+import com.findaroom.findaroomcore.utils.TestPojos;
+import com.findaroom.findaroomcore.utils.TestPredicates;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -55,7 +55,7 @@ public class HostOperationsServiceTest {
     @Test
     public void findAccommodationsByHostId() {
 
-        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(PojoUtils.accommodation()));
+        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(TestPojos.accommodation()));
 
         var filter = new AccommodationSearchFilter();
         Flux<Accommodation> accommodations = hostOps.findAccommodationsByHostId("444", filter);
@@ -71,10 +71,10 @@ public class HostOperationsServiceTest {
     @Test
     public void findAccommodationBookingsByFilter() {
 
-        Accommodation accommodation = PojoUtils.accommodation();
+        Accommodation accommodation = TestPojos.accommodation();
         accommodation.setAccommodationId("123");
         when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(accommodation));
-        when(bookingRepo.findAllByFilter(any())).thenReturn(Flux.just(PojoUtils.booking(), PojoUtils.booking()));
+        when(bookingRepo.findAllByFilter(any())).thenReturn(Flux.just(TestPojos.booking(), TestPojos.booking()));
 
         var filter = new BookingSearchFilter();
         Flux<Booking> bookings = hostOps.findAccommodationBookingsByFilter("123", "444", filter);
@@ -96,14 +96,14 @@ public class HostOperationsServiceTest {
 
         StepVerifier
                 .create(bookings)
-                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void findAccommodationBookingsByFilter_whenBookingsNotFound_shouldReturnEmpty() {
 
-        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
         when(bookingRepo.findAllByFilter(any())).thenReturn(Flux.empty());
 
         Flux<Booking> bookings = hostOps.findAccommodationBookingsByFilter("123", "444", new BookingSearchFilter());
@@ -116,11 +116,11 @@ public class HostOperationsServiceTest {
     @Test
     public void updateAccommodation() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(acc));
         when(accommodationRepo.save(any())).thenReturn(Mono.just(acc));
 
-        var update = PojoUtils.updateAccommodation();
+        var update = TestPojos.updateAccommodation();
         update.setName("new");
         Mono<Accommodation> accommodation = hostOps.updateAccommodation("123", "444", update);
 
@@ -135,19 +135,19 @@ public class HostOperationsServiceTest {
 
         when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.empty());
 
-        Mono<Accommodation> accommodation = hostOps.updateAccommodation("123", "444", PojoUtils.updateAccommodation());
+        Mono<Accommodation> accommodation = hostOps.updateAccommodation("123", "444", TestPojos.updateAccommodation());
 
         StepVerifier
                 .create(accommodation)
-                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void confirmBooking() {
 
-        Booking book = PojoUtils.booking();
-        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        Booking book = TestPojos.booking();
+        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
         when(bookingRepo.findByBookingIdAndAccommodationId(anyString(), anyString())).thenReturn(Mono.just(book));
         when(bookingVerifier.verifyBookingIsPending(any())).thenReturn(Mono.just(book));
         when(bookingRepo.save(any())).thenReturn(Mono.just(book));
@@ -163,7 +163,7 @@ public class HostOperationsServiceTest {
     @Test
     public void confirmBooking_whenAccommodationNotFound_shouldReturnNotFound() {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.empty());
         when(bookingRepo.findByBookingIdAndAccommodationId(anyString(), anyString())).thenReturn(Mono.just(book));
         when(bookingVerifier.verifyBookingIsPending(any())).thenReturn(Mono.just(book));
@@ -172,30 +172,30 @@ public class HostOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void confirmBooking_whenBookingNotFound_shouldReturnNotFound() {
 
-        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
         when(bookingRepo.findByBookingIdAndAccommodationId(anyString(), anyString())).thenReturn(Mono.empty());
 
         Mono<Booking> booking = hostOps.confirmBooking("123", "111", "444");
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound(BOOKING_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(BOOKING_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void confirmBooking_whenBookingNotPending_shouldReturnUnprocessableEntity() {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setStatus(CANCELLED);
-        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
         when(bookingRepo.findByBookingIdAndAccommodationId(anyString(), anyString())).thenReturn(Mono.just(book));
         when(bookingVerifier.verifyBookingIsPending(any())).thenReturn(Mono.error(ErrorUtils.unprocessableEntity(BOOKING_NOT_PENDING)));
 
@@ -203,15 +203,15 @@ public class HostOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_NOT_PENDING))
+                .expectErrorMatches(TestPredicates.unprocessableEntity(BOOKING_NOT_PENDING))
                 .verify();
     }
 
     @Test
     public void cancelBooking() {
 
-        Booking book = PojoUtils.booking();
-        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        Booking book = TestPojos.booking();
+        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
         when(bookingRepo.findByBookingIdAndAccommodationId(anyString(), anyString())).thenReturn(Mono.just(book));
         when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.just(book));
         when(bookingRepo.save(any())).thenReturn(Mono.just(book));
@@ -227,7 +227,7 @@ public class HostOperationsServiceTest {
     @Test
     public void cancelBooking_whenAccommodationNotFound_shouldReturnNotFound() {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.empty());
         when(bookingRepo.findByBookingIdAndAccommodationId(anyString(), anyString())).thenReturn(Mono.just(book));
         when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.just(book));
@@ -236,30 +236,30 @@ public class HostOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void cancelBooking_whenBookingNotFound_shouldReturnNotFound() {
 
-        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
         when(bookingRepo.findByBookingIdAndAccommodationId(anyString(), anyString())).thenReturn(Mono.empty());
 
         Mono<Booking> booking = hostOps.cancelBooking("123", "111", "444");
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.notFound(BOOKING_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(BOOKING_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void cancelBooking_whenBookingNotActive_shouldReturnUnprocessableEntity() {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setStatus(CANCELLED);
-        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
         when(bookingRepo.findByBookingIdAndAccommodationId(anyString(), anyString())).thenReturn(Mono.just(book));
         when(bookingVerifier.verifyBookingIsActive(any())).thenReturn(Mono.error(ErrorUtils.unprocessableEntity(BOOKING_NOT_ACTIVE)));
 
@@ -268,16 +268,16 @@ public class HostOperationsServiceTest {
 
         StepVerifier
                 .create(booking)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_NOT_ACTIVE))
+                .expectErrorMatches(TestPredicates.unprocessableEntity(BOOKING_NOT_ACTIVE))
                 .verify();
     }
 
     @Test
     public void unlistAccommodation() {
 
-        Accommodation acc = PojoUtils.accommodation();
-        Booking book1 = PojoUtils.booking();
-        Booking book2 = PojoUtils.booking();
+        Accommodation acc = TestPojos.accommodation();
+        Booking book1 = TestPojos.booking();
+        Booking book2 = TestPojos.booking();
         when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(acc));
         when(accommodationVerifier.verifyAccommodationIsListed(any())).thenReturn(Mono.just(acc));
         when(accommodationRepo.save(any())).thenReturn(Mono.just(acc));
@@ -305,14 +305,14 @@ public class HostOperationsServiceTest {
 
         StepVerifier
                 .create(unlisted)
-                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void unlistAccommodation_whenAccommodationAlreadyUnlisted_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setListed(false);
         when(accommodationRepo.findByAccommodationIdAndHostId(anyString(), anyString())).thenReturn(Mono.just(acc));
         when(accommodationVerifier.verifyAccommodationIsListed(any()))
@@ -322,7 +322,7 @@ public class HostOperationsServiceTest {
 
         StepVerifier
                 .create(unlisted)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity(ACCOMMODATION_ALREADY_UNLISTED))
+                .expectErrorMatches(TestPredicates.unprocessableEntity(ACCOMMODATION_ALREADY_UNLISTED))
                 .verify();
     }
 }

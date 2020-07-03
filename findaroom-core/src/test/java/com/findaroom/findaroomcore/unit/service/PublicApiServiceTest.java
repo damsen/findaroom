@@ -9,8 +9,8 @@ import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
 import com.findaroom.findaroomcore.service.PublicApiService;
-import com.findaroom.findaroomcore.utils.PojoUtils;
-import com.findaroom.findaroomcore.utils.PredicateUtils;
+import com.findaroom.findaroomcore.utils.TestPojos;
+import com.findaroom.findaroomcore.utils.TestPredicates;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -53,7 +53,7 @@ public class PublicApiServiceTest {
     public void findAccommodationsByFilter_withNoDateFilters() {
 
         when(bookingRepo.findAllByFilter(any())).thenReturn(Flux.empty());
-        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(PojoUtils.accommodation(), PojoUtils.accommodation()));
+        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(TestPojos.accommodation(), TestPojos.accommodation()));
 
         var filter = new AccommodationSearchFilter();
         Flux<Accommodation> accommodations = publicApi.findAccommodationsByFilter(filter);
@@ -69,14 +69,14 @@ public class PublicApiServiceTest {
     @Test
     public void findAccommodationsByFilter_withDateFilters() {
 
-        Booking book1 = PojoUtils.booking();
+        Booking book1 = TestPojos.booking();
         book1.setAccommodationId("123");
-        Booking book2 = PojoUtils.booking();
+        Booking book2 = TestPojos.booking();
         book2.setAccommodationId("456");
-        Booking book3 = PojoUtils.booking();
+        Booking book3 = TestPojos.booking();
         book3.setAccommodationId("456");
         when(bookingRepo.findAllByFilter(any())).thenReturn(Flux.just(book1, book2, book3));
-        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(PojoUtils.accommodation(), PojoUtils.accommodation()));
+        when(accommodationRepo.findAllByFilter(any())).thenReturn(Flux.just(TestPojos.accommodation(), TestPojos.accommodation()));
 
         var filter = new AccommodationSearchFilter();
         filter.setCheckin(LocalDate.now());
@@ -94,7 +94,7 @@ public class PublicApiServiceTest {
     @Test
     public void findAccommodationById() {
 
-        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
 
         Mono<Accommodation> accommodation = publicApi.findAccommodationById("123");
 
@@ -113,15 +113,15 @@ public class PublicApiServiceTest {
 
         StepVerifier
                 .create(accommodation)
-                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void findAccommodationReviewsByFilter() {
 
-        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
-        when(reviewRepo.findAllByFilter(any())).thenReturn(Flux.just(PojoUtils.review(), PojoUtils.review()));
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
+        when(reviewRepo.findAllByFilter(any())).thenReturn(Flux.just(TestPojos.review(), TestPojos.review()));
 
         Flux<Review> reviews = publicApi.findAccommodationReviewsByFilter("123", new ReviewSearchFilter());
 
@@ -140,14 +140,14 @@ public class PublicApiServiceTest {
 
         StepVerifier
                 .create(reviews)
-                .expectErrorMatches(PredicateUtils.notFound(ACCOMMODATION_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(ACCOMMODATION_NOT_FOUND))
                 .verify();
     }
 
     @Test
     public void findAccommodationReviewsByFilter_whenReviewsNotFound_shouldReturnEmpty() {
 
-        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(PojoUtils.accommodation()));
+        when(accommodationRepo.findById(anyString())).thenReturn(Mono.just(TestPojos.accommodation()));
         when(reviewRepo.findAllByFilter(any())).thenReturn(Flux.empty());
 
         Flux<Review> reviews = publicApi.findAccommodationReviewsByFilter("123", new ReviewSearchFilter());

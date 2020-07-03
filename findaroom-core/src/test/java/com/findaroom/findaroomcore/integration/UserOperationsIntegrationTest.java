@@ -9,7 +9,7 @@ import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
-import com.findaroom.findaroomcore.utils.PojoUtils;
+import com.findaroom.findaroomcore.utils.TestPojos;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +59,9 @@ public class UserOperationsIntegrationTest {
     @Test
     public void getUserBookings() {
 
-        Booking book1 = PojoUtils.booking();
+        Booking book1 = TestPojos.booking();
         book1.setUserId("andrea_damiani@protonmail.com");
-        Booking book2 = PojoUtils.booking();
+        Booking book2 = TestPojos.booking();
         book2.setUserId("someone_else@example.com");
         bookingRepo.saveAll(Flux.just(book1, book2)).blockLast();
 
@@ -80,9 +80,9 @@ public class UserOperationsIntegrationTest {
     @Test
     public void getUserReviews() {
 
-        Review rev1 = PojoUtils.review();
+        Review rev1 = TestPojos.review();
         rev1.setUserId("andrea_damiani@protonmail.com");
-        Review rev2 = PojoUtils.review();
+        Review rev2 = TestPojos.review();
         rev2.setUserId("someone_else@example.com");
         reviewRepo.saveAll(Flux.just(rev1, rev2)).blockLast();
 
@@ -101,11 +101,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void getUserFavorites() {
 
-        Accommodation acc1 = PojoUtils.accommodation();
+        Accommodation acc1 = TestPojos.accommodation();
         acc1.setAccommodationId("123");
-        Accommodation acc2 = PojoUtils.accommodation();
+        Accommodation acc2 = TestPojos.accommodation();
         acc2.setAccommodationId("456");
-        Accommodation acc3 = PojoUtils.accommodation();
+        Accommodation acc3 = TestPojos.accommodation();
         acc3.setAccommodationId("789");
         accommodationRepo.saveAll(Flux.just(acc1, acc2, acc3)).blockLast();
 
@@ -129,7 +129,7 @@ public class UserOperationsIntegrationTest {
     @Test
     public void getUserBookingById() {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setBookingId("111");
         book.setUserId("andrea_damiani@protonmail.com");
         bookingRepo.save(book).block();
@@ -160,7 +160,7 @@ public class UserOperationsIntegrationTest {
                 .post()
                 .uri("/api/v1/user-ops/accommodations")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.createAccommodation())
+                .bodyValue(TestPojos.createAccommodation())
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
@@ -172,7 +172,7 @@ public class UserOperationsIntegrationTest {
     @Test
     public void bookAccommodation() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
@@ -183,7 +183,7 @@ public class UserOperationsIntegrationTest {
                 .post()
                 .uri("/api/v1/user-ops/accommodations/{accommodationId}/bookings", "123")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.bookAccommodation())
+                .bodyValue(TestPojos.bookAccommodation())
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
@@ -196,7 +196,7 @@ public class UserOperationsIntegrationTest {
     @Test
     public void bookAccommodation_whenUserIsTheHost_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         accommodationRepo.save(acc).block();
@@ -208,7 +208,7 @@ public class UserOperationsIntegrationTest {
                 .post()
                 .uri("/api/v1/user-ops/accommodations/{accommodationId}/bookings", "123")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.bookAccommodation())
+                .bodyValue(TestPojos.bookAccommodation())
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
@@ -218,14 +218,14 @@ public class UserOperationsIntegrationTest {
     @Test
     public void bookAccommodation_whenMaxGuestsExceeded_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         acc.setMaxGuests(3);
         accommodationRepo.save(acc).block();
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        BookAccommodation bookAcc = PojoUtils.bookAccommodation();
+        BookAccommodation bookAcc = TestPojos.bookAccommodation();
         bookAcc.setGuests(4);
         webTestClient
                 .mutateWith(jwtMutator)
@@ -242,11 +242,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void bookAccommodation_whenUserAlreadyHasBookingsBetweenDates_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setUserId("andrea_damiani@protonmail.com");
         book.setCheckin(LocalDate.now().plusDays(6));
         book.setCheckout(LocalDate.now().plusDays(12));
@@ -254,7 +254,7 @@ public class UserOperationsIntegrationTest {
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        BookAccommodation bookAcc = PojoUtils.bookAccommodation();
+        BookAccommodation bookAcc = TestPojos.bookAccommodation();
         bookAcc.setBookingDates(new BookingDates(LocalDate.now().plusDays(5), LocalDate.now().plusDays(10)));
         webTestClient
                 .mutateWith(jwtMutator)
@@ -271,11 +271,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void bookAccommodation_whenAccommodationAlreadyBooked_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setAccommodationId("123");
         book.setCheckin(LocalDate.now().plusDays(6));
         book.setCheckout(LocalDate.now().plusDays(12));
@@ -283,7 +283,7 @@ public class UserOperationsIntegrationTest {
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        BookAccommodation bookAcc = PojoUtils.bookAccommodation();
+        BookAccommodation bookAcc = TestPojos.bookAccommodation();
         bookAcc.setBookingDates(new BookingDates(LocalDate.now().plusDays(5), LocalDate.now().plusDays(10)));
         webTestClient
                 .mutateWith(jwtMutator)
@@ -300,11 +300,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void reviewAccommodation() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setUserId("andrea_damiani@protonmail.com");
         book.setBookingId("111");
         book.setAccommodationId("123");
@@ -314,7 +314,7 @@ public class UserOperationsIntegrationTest {
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        ReviewAccommodation review = PojoUtils.reviewAccommodation();
+        ReviewAccommodation review = TestPojos.reviewAccommodation();
         review.setMessage("message");
         review.setRating(5.0);
         webTestClient
@@ -340,11 +340,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void reviewAccommodation_whenBookingNotCompleted_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setUserId("andrea_damiani@protonmail.com");
         book.setBookingId("111");
         book.setAccommodationId("123");
@@ -360,7 +360,7 @@ public class UserOperationsIntegrationTest {
                         .queryParam("bookingId", "111")
                         .build("123"))
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.reviewAccommodation())
+                .bodyValue(TestPojos.reviewAccommodation())
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
@@ -370,11 +370,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void cancelBooking() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setUserId("andrea_damiani@protonmail.com");
         book.setBookingId("111");
         book.setAccommodationId("123");
@@ -399,11 +399,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void cancelBooking_whenBookingNotActive_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setUserId("andrea_damiani@protonmail.com");
         book.setBookingId("111");
         book.setAccommodationId("123");
@@ -425,11 +425,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void rescheduleBooking() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setUserId("andrea_damiani@protonmail.com");
         book.setStatus(CONFIRMED);
         book.setBookingId("111");
@@ -440,7 +440,7 @@ public class UserOperationsIntegrationTest {
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        BookingDates reschedule = PojoUtils.bookingDates();
+        BookingDates reschedule = TestPojos.bookingDates();
         reschedule.setCheckin(LocalDate.now().plusDays(8));
         reschedule.setCheckout(LocalDate.now().plusDays(12));
         webTestClient
@@ -463,11 +463,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void rescheduleBooking_whenBookingNotActive_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setUserId("andrea_damiani@protonmail.com");
         book.setStatus(CANCELLED);
         book.setBookingId("111");
@@ -478,7 +478,7 @@ public class UserOperationsIntegrationTest {
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        BookingDates reschedule = PojoUtils.bookingDates();
+        BookingDates reschedule = TestPojos.bookingDates();
         reschedule.setCheckin(LocalDate.now().plusDays(8));
         reschedule.setCheckout(LocalDate.now().plusDays(12));
         webTestClient
@@ -496,11 +496,11 @@ public class UserOperationsIntegrationTest {
     @Test
     public void rescheduleBooking_whenRescheduleHasSameDatesAsBooking_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setUserId("andrea_damiani@protonmail.com");
         book.setBookingId("111");
         book.setAccommodationId("123");
@@ -510,7 +510,7 @@ public class UserOperationsIntegrationTest {
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        BookingDates reschedule = PojoUtils.bookingDates();
+        BookingDates reschedule = TestPojos.bookingDates();
         reschedule.setCheckin(LocalDate.now().plusDays(5));
         reschedule.setCheckout(LocalDate.now().plusDays(10));
         webTestClient
@@ -528,17 +528,17 @@ public class UserOperationsIntegrationTest {
     @Test
     public void rescheduleBooking_whenUserAlreadyHasBookingsBetweenDates_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book1 = PojoUtils.booking();
+        Booking book1 = TestPojos.booking();
         book1.setUserId("andrea_damiani@protonmail.com");
         book1.setBookingId("111");
         book1.setAccommodationId("123");
         book1.setCheckin(LocalDate.now().plusDays(5));
         book1.setCheckout(LocalDate.now().plusDays(10));
-        Booking book2 = PojoUtils.booking();
+        Booking book2 = TestPojos.booking();
         book2.setUserId("andrea_damiani@protonmail.com");
         book2.setAccommodationId("456");
         book2.setCheckin(LocalDate.now().plusDays(20));
@@ -547,7 +547,7 @@ public class UserOperationsIntegrationTest {
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        BookingDates reschedule = PojoUtils.bookingDates();
+        BookingDates reschedule = TestPojos.bookingDates();
         reschedule.setCheckin(LocalDate.now().plusDays(18));
         reschedule.setCheckout(LocalDate.now().plusDays(21));
         webTestClient
@@ -565,17 +565,17 @@ public class UserOperationsIntegrationTest {
     @Test
     public void rescheduleBooking_whenAccommodationIsBooked_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book1 = PojoUtils.booking();
+        Booking book1 = TestPojos.booking();
         book1.setUserId("andrea_damiani@protonmail.com");
         book1.setBookingId("111");
         book1.setAccommodationId("123");
         book1.setCheckin(LocalDate.now().plusDays(5));
         book1.setCheckout(LocalDate.now().plusDays(10));
-        Booking book2 = PojoUtils.booking();
+        Booking book2 = TestPojos.booking();
         book2.setAccommodationId("123");
         book2.setCheckin(LocalDate.now().plusDays(20));
         book2.setCheckout(LocalDate.now().plusDays(22));
@@ -583,7 +583,7 @@ public class UserOperationsIntegrationTest {
 
         var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        BookingDates reschedule = PojoUtils.bookingDates();
+        BookingDates reschedule = TestPojos.bookingDates();
         reschedule.setCheckin(LocalDate.now().plusDays(18));
         reschedule.setCheckout(LocalDate.now().plusDays(21));
         webTestClient

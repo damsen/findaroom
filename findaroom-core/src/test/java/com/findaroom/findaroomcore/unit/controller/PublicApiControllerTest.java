@@ -14,8 +14,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static com.findaroom.findaroomcore.utils.PojoUtils.accommodation;
-import static com.findaroom.findaroomcore.utils.PojoUtils.review;
+import static com.findaroom.findaroomcore.utils.TestPojos.accommodation;
+import static com.findaroom.findaroomcore.utils.TestPojos.review;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;

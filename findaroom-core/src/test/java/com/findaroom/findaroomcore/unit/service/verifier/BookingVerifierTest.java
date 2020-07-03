@@ -4,8 +4,8 @@ import com.findaroom.findaroomcore.dto.BookingDates;
 import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.model.enums.BookingStatus;
 import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
-import com.findaroom.findaroomcore.utils.PojoUtils;
-import com.findaroom.findaroomcore.utils.PredicateUtils;
+import com.findaroom.findaroomcore.utils.TestPojos;
+import com.findaroom.findaroomcore.utils.TestPredicates;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -34,7 +34,7 @@ public class BookingVerifierTest {
     @Test
     public void verifyBookingIsCompleted() {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setStatus(BookingStatus.DONE);
         book.setCheckout(LocalDate.now().minusDays(7));
         Mono<Booking> verified = verifier.verifyBookingIsCompleted(book);
@@ -48,11 +48,11 @@ public class BookingVerifierTest {
     @Test
     public void verifyBookingIsCompleted_whenBookingIsNotCompleted_shouldReturnUnprocessableEntity() {
 
-        Mono<Booking> verified = verifier.verifyBookingIsCompleted(PojoUtils.booking());
+        Mono<Booking> verified = verifier.verifyBookingIsCompleted(TestPojos.booking());
 
         StepVerifier
                 .create(verified)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_NOT_COMPLETED))
+                .expectErrorMatches(TestPredicates.unprocessableEntity(BOOKING_NOT_COMPLETED))
                 .verify();
     }
 
@@ -60,7 +60,7 @@ public class BookingVerifierTest {
     @EnumSource(value = BookingStatus.class, names = {"PENDING", "CONFIRMED"})
     public void verifyBookingIsActive(BookingStatus status) {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setStatus(status);
         Mono<Booking> verified = verifier.verifyBookingIsActive(book);
 
@@ -74,20 +74,20 @@ public class BookingVerifierTest {
     @EnumSource(value = BookingStatus.class, names = {"CANCELLED", "DONE"})
     public void verifyBookingIsActive_whenBookingIsNotActive_shouldReturnUnprocessableEntity(BookingStatus status) {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setStatus(status);
         Mono<Booking> verified = verifier.verifyBookingIsActive(book);
 
         StepVerifier
                 .create(verified)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_NOT_ACTIVE))
+                .expectErrorMatches(TestPredicates.unprocessableEntity(BOOKING_NOT_ACTIVE))
                 .verify();
     }
 
     @Test
     public void verifyBookingIsPending() {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         Mono<Booking> verified = verifier.verifyBookingIsPending(book);
 
         StepVerifier
@@ -100,21 +100,21 @@ public class BookingVerifierTest {
     @EnumSource(value = BookingStatus.class, names = {"CONFIRMED", "CANCELLED", "DONE"})
     public void verifyBookingIsPending_whenBookingIsNotPending_shouldReturnUnprocessableEntity(BookingStatus status) {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setStatus(status);
         Mono<Booking> verified = verifier.verifyBookingIsPending(book);
 
         StepVerifier
                 .create(verified)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_NOT_PENDING))
+                .expectErrorMatches(TestPredicates.unprocessableEntity(BOOKING_NOT_PENDING))
                 .verify();
     }
 
     @Test
     public void verifyBookingHasDifferentDatesThan() {
 
-        Booking book = PojoUtils.booking();
-        Mono<Booking> verified = verifier.verifyBookingHasDifferentDatesThan(book, PojoUtils.bookingDates());
+        Booking book = TestPojos.booking();
+        Mono<Booking> verified = verifier.verifyBookingHasDifferentDatesThan(book, TestPojos.bookingDates());
 
         StepVerifier
                 .create(verified)
@@ -125,13 +125,13 @@ public class BookingVerifierTest {
     @Test
     public void verifyBookingHasDifferentDatesThan_whenRescheduleHasSameDatesAsBooking_shouldReturnUnprocessableEntity() {
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         BookingDates reschedule = new BookingDates(book.getCheckin(), book.getCheckout());
         Mono<Booking> verified = verifier.verifyBookingHasDifferentDatesThan(book, reschedule);
 
         StepVerifier
                 .create(verified)
-                .expectErrorMatches(PredicateUtils.unprocessableEntity(BOOKING_DATES_SAME_AS_RESCHEDULE_DATES))
+                .expectErrorMatches(TestPredicates.unprocessableEntity(BOOKING_DATES_SAME_AS_RESCHEDULE_DATES))
                 .verify();
     }
 }

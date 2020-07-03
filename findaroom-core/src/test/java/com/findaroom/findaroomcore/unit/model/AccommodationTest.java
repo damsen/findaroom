@@ -5,7 +5,7 @@ import com.findaroom.findaroomcore.dto.UpdateAccommodation;
 import com.findaroom.findaroomcore.model.Accommodation;
 import org.junit.jupiter.api.Test;
 
-import static com.findaroom.findaroomcore.utils.PojoUtils.*;
+import static com.findaroom.findaroomcore.utils.TestPojos.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AccommodationTest {

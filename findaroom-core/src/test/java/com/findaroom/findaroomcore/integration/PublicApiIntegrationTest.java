@@ -6,7 +6,7 @@ import com.findaroom.findaroomcore.model.Review;
 import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
-import com.findaroom.findaroomcore.utils.PojoUtils;
+import com.findaroom.findaroomcore.utils.TestPojos;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +51,9 @@ public class PublicApiIntegrationTest {
     @Test
     public void getAccommodations_withNoDateFilters() {
 
-        Accommodation acc1 = PojoUtils.accommodation();
+        Accommodation acc1 = TestPojos.accommodation();
         acc1.setAccommodationId("123");
-        Accommodation acc2 = PojoUtils.accommodation();
+        Accommodation acc2 = TestPojos.accommodation();
         acc2.setAccommodationId("456");
         accommodationRepo.saveAll(Flux.just(acc1, acc2)).blockLast();
 
@@ -71,19 +71,19 @@ public class PublicApiIntegrationTest {
     @Test
     public void getAccommodations_withDateFilters_shouldReturnFilteredResults() {
 
-        Accommodation acc1 = PojoUtils.accommodation();
+        Accommodation acc1 = TestPojos.accommodation();
         acc1.setAccommodationId("123");
-        Accommodation acc2 = PojoUtils.accommodation();
+        Accommodation acc2 = TestPojos.accommodation();
         acc2.setAccommodationId("456");
-        Accommodation acc3 = PojoUtils.accommodation();
+        Accommodation acc3 = TestPojos.accommodation();
         acc2.setAccommodationId("789");
         accommodationRepo.saveAll(Flux.just(acc1, acc2, acc3)).blockLast();
 
-        Booking book1 = PojoUtils.booking();
+        Booking book1 = TestPojos.booking();
         book1.setAccommodationId("123");
         book1.setCheckin(LocalDate.now().plusDays(5));
         book1.setCheckout(LocalDate.now().plusDays(10));
-        Booking book2 = PojoUtils.booking();
+        Booking book2 = TestPojos.booking();
         book2.setStatus(CANCELLED);
         book2.setAccommodationId("456");
         book2.setCheckin(LocalDate.now().plusDays(4));
@@ -109,7 +109,7 @@ public class PublicApiIntegrationTest {
     @Test
     public void getAccommodationById() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
@@ -126,13 +126,13 @@ public class PublicApiIntegrationTest {
     @Test
     public void getAccommodationReviews() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Review rev1 = PojoUtils.review();
+        Review rev1 = TestPojos.review();
         rev1.setAccommodationId("123");
-        Review rev2 = PojoUtils.review();
+        Review rev2 = TestPojos.review();
         rev2.setAccommodationId("123");
         reviewRepo.saveAll(Flux.just(rev1, rev2)).blockLast();
 

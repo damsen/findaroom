@@ -16,7 +16,7 @@ import java.util.List;
 
 import static com.findaroom.findaroomcore.model.enums.AccommodationType.*;
 import static com.findaroom.findaroomcore.model.enums.Amenity.*;
-import static com.findaroom.findaroomcore.utils.PojoUtils.accommodation;
+import static com.findaroom.findaroomcore.utils.TestPojos.accommodation;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataMongoTest

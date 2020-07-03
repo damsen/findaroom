@@ -6,7 +6,7 @@ import com.findaroom.findaroomcore.model.Booking;
 import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
-import com.findaroom.findaroomcore.utils.PojoUtils;
+import com.findaroom.findaroomcore.utils.TestPojos;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +54,9 @@ public class HostOperationsIntegrationTest {
     @Test
     public void getHostAccommodations() {
 
-        Accommodation acc1 = PojoUtils.accommodation();
+        Accommodation acc1 = TestPojos.accommodation();
         acc1.getHost().setHostId("andrea_damiani@protonmail.com");
-        Accommodation acc2 = PojoUtils.accommodation();
+        Accommodation acc2 = TestPojos.accommodation();
         accommodationRepo.saveAll(Flux.just(acc1, acc2)).blockLast();
 
         var jwtMutator = mockJwt()
@@ -77,14 +77,14 @@ public class HostOperationsIntegrationTest {
     @Test
     public void getAccommodationBookings() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         accommodationRepo.save(acc).block();
 
-        Booking book1 = PojoUtils.booking();
+        Booking book1 = TestPojos.booking();
         book1.setAccommodationId("123");
-        Booking book2 = PojoUtils.booking();
+        Booking book2 = TestPojos.booking();
         book2.setAccommodationId("123");
         bookingRepo.saveAll(Flux.just(book1, book2)).blockLast();
 
@@ -105,7 +105,7 @@ public class HostOperationsIntegrationTest {
     @Test
     public void updateAccommodation() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         accommodationRepo.save(acc).block();
@@ -114,7 +114,7 @@ public class HostOperationsIntegrationTest {
                 .authorities(new SimpleGrantedAuthority("host"))
                 .jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
 
-        UpdateAccommodation update = PojoUtils.updateAccommodation();
+        UpdateAccommodation update = TestPojos.updateAccommodation();
         update.setName("new");
         webTestClient
                 .mutateWith(jwtMutator)
@@ -133,12 +133,12 @@ public class HostOperationsIntegrationTest {
     @Test
     public void confirmBooking() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setBookingId("111");
         book.setAccommodationId("123");
         bookingRepo.save(book).block();
@@ -161,12 +161,12 @@ public class HostOperationsIntegrationTest {
     @Test
     public void confirmBooking_whenBookingNotPending_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.setAccommodationId("123");
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setBookingId("111");
         book.setAccommodationId("123");
         book.setStatus(DONE);
@@ -189,12 +189,12 @@ public class HostOperationsIntegrationTest {
     @Test
     public void cancelBooking() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setBookingId("111");
         book.setAccommodationId("123");
         bookingRepo.save(book).block();
@@ -217,12 +217,12 @@ public class HostOperationsIntegrationTest {
     @Test
     public void cancelBooking_whenBookingNotActive_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setBookingId("111");
         book.setAccommodationId("123");
         book.setStatus(DONE);
@@ -245,12 +245,12 @@ public class HostOperationsIntegrationTest {
     @Test
     public void unlistAccommodation() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         acc.setAccommodationId("123");
         accommodationRepo.save(acc).block();
 
-        Booking book = PojoUtils.booking();
+        Booking book = TestPojos.booking();
         book.setAccommodationId("123");
         book.setStatus(PENDING);
         bookingRepo.save(book).block();
@@ -283,7 +283,7 @@ public class HostOperationsIntegrationTest {
     @Test
     public void unlistAccommodation_whenAccommodationAlreadyUnlisted_shouldReturnUnprocessableEntity() {
 
-        Accommodation acc = PojoUtils.accommodation();
+        Accommodation acc = TestPojos.accommodation();
         acc.getHost().setHostId("andrea_damiani@protonmail.com");
         acc.setAccommodationId("123");
         acc.setListed(false);

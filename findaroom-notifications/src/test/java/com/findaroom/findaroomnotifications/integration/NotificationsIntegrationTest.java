@@ -2,7 +2,7 @@ package com.findaroom.findaroomnotifications.integration;
 
 import com.findaroom.findaroomnotifications.notification.Notification;
 import com.findaroom.findaroomnotifications.notification.NotificationRepo;
-import com.findaroom.findaroomnotifications.utils.PojoUtils;
+import com.findaroom.findaroomnotifications.utils.TestPojos;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class NotificationsIntegrationTest {
     @Test
     public void getUserNotifications() {
 
-        notificationRepo.saveAll(Flux.just(PojoUtils.notification(), PojoUtils.notification())).blockLast();
+        notificationRepo.saveAll(Flux.just(TestPojos.notification(), TestPojos.notification())).blockLast();
 
         var jwtMutator = mockJwt()
                 .jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
@@ -57,9 +57,9 @@ public class NotificationsIntegrationTest {
     @Test
     public void getUserNotificationById() {
 
-        var n = PojoUtils.notification();
+        var n = TestPojos.notification();
         n.setNotificationId("123");
-        notificationRepo.saveAll(Flux.just(n, PojoUtils.notification())).blockLast();
+        notificationRepo.saveAll(Flux.just(n, TestPojos.notification())).blockLast();
 
         var jwtMutator = mockJwt()
                 .jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
@@ -101,7 +101,7 @@ public class NotificationsIntegrationTest {
                 .post()
                 .uri("/api/v1/notifications")
                 .contentType(APPLICATION_JSON)
-                .bodyValue(PojoUtils.notifyUser())
+                .bodyValue(TestPojos.notifyUser())
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
@@ -112,7 +112,7 @@ public class NotificationsIntegrationTest {
     @Test
     public void deleteNotification() {
 
-        var n = PojoUtils.notification();
+        var n = TestPojos.notification();
         n.setNotificationId("123");
         notificationRepo.save(n);
 
