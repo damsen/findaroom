@@ -1,6 +1,7 @@
 package com.findaroom.findaroomnotifications.notification;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 
 import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.MediaType.*;
 
 @RestController
 @RequestMapping("/api/v1/notifications")
@@ -21,7 +23,7 @@ public class NotificationController {
 
     private final NotificationRepo notificationRepo;
 
-    @GetMapping(produces = "application/stream+json")
+    @GetMapping(produces = APPLICATION_STREAM_JSON_VALUE)
     public Flux<Notification> getUserNotifications(@AuthenticationPrincipal Jwt jwt) {
         return notificationRepo.findByUserId(jwt.getSubject());
     }
@@ -32,8 +34,13 @@ public class NotificationController {
         return notificationRepo
                 .findByNotificationIdAndUserId(notificationId, jwt.getSubject())
                 .switchIfEmpty(Mono.error(new ResponseStatusException(NOT_FOUND, NOTIFICATION_NOT_FOUND)))
-                .doOnNext(notification -> notification.setSeen(true))
-                .flatMap(notificationRepo::save);
+                .flatMap(notification -> {
+                    if (!notification.isSeen()) {
+                        notification.setSeen(true);
+                        return notificationRepo.save(notification);
+                    }
+                    return Mono.just(notification);
+                });
     }
 
     @PostMapping
