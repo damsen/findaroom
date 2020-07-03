@@ -16,11 +16,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/jwt")
-    public Jwt jwt(@AuthenticationPrincipal Jwt jwt) {
-        return jwt;
-    }
-
     @GetMapping("/{userId}")
     public Mono<PublicUser> getById(@PathVariable String userId) {
         return userService.getById(userId);
