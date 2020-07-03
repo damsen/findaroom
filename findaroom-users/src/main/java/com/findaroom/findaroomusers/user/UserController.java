@@ -2,10 +2,10 @@ package com.findaroom.findaroomusers.user;
 
 import com.okta.sdk.resource.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 
@@ -16,32 +16,37 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/jwt")
+    public Jwt jwt(@AuthenticationPrincipal Jwt jwt) {
+        return jwt;
+    }
+
     @GetMapping("/{userId}")
-    public ResponseEntity<PublicUser> getById(@PathVariable String userId) {
-        return ResponseEntity.ok(userService.getById(userId));
+    public Mono<PublicUser> getById(@PathVariable String userId) {
+        return userService.getById(userId);
     }
 
     @GetMapping("/my-account")
-    public ResponseEntity<User> getMe(@AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok(userService.getMe(jwt.getSubject()));
+    public Mono<User> getMe(@AuthenticationPrincipal Jwt jwt) {
+        return userService.getMe(jwt.getSubject());
     }
 
     @PatchMapping("/my-account")
-    public ResponseEntity<User> update(@RequestBody @Valid UserInfo userInfo,
-                                       @AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok(userService.update(jwt.getSubject(), userInfo));
+    public Mono<User> update(@RequestBody @Valid UserInfo userInfo,
+                             @AuthenticationPrincipal Jwt jwt) {
+        return userService.update(jwt.getSubject(), userInfo);
     }
 
     @PostMapping("/my-account/favorites")
-    public ResponseEntity<User> addAccommodationToFavorites(@RequestParam String accommodationId,
-                                                            @AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok(userService.addAccommodationToFavourites(jwt.getSubject(), accommodationId));
+    public Mono<User> addAccommodationToFavorites(@RequestParam String accommodationId,
+                                                  @AuthenticationPrincipal Jwt jwt) {
+        return userService.addAccommodationToFavourites(jwt.getSubject(), accommodationId);
     }
 
     @DeleteMapping("/my-account/favorites/{accommodationId}")
-    public ResponseEntity<User> removeAccommodationFromFavorites(@PathVariable String accommodationId,
-                                                                 @AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok(userService.removeAccommodationFromFavourites(jwt.getSubject(), accommodationId));
+    public Mono<User> removeAccommodationFromFavorites(@PathVariable String accommodationId,
+                                                       @AuthenticationPrincipal Jwt jwt) {
+        return userService.removeAccommodationFromFavourites(jwt.getSubject(), accommodationId);
     }
 
 }

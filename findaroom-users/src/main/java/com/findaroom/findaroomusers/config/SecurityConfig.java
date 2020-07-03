@@ -1,23 +1,26 @@
 package com.findaroom.findaroomusers.config;
 
 import com.okta.spring.boot.oauth.Okta;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
-@EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableWebFluxSecurity
+public class SecurityConfig {
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
         http
                 .csrf().disable()
-                .authorizeRequests()
-                .mvcMatchers("/api/v1/**").authenticated()
+                .authorizeExchange()
+                .pathMatchers("/api/v1/**").authenticated()
                 .and()
                 .oauth2ResourceServer().jwt();
 
         Okta.configureResourceServer401ResponseBody(http);
+
+        return http.build();
     }
 
 }

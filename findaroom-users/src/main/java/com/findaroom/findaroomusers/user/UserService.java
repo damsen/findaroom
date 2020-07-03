@@ -2,76 +2,69 @@ package com.findaroom.findaroomusers.user;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.okta.sdk.client.Client;
-import com.okta.sdk.client.Clients;
 import com.okta.sdk.resource.user.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.util.CollectionUtils;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.function.BiConsumer;
 
-import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
+import static com.findaroom.findaroomusers.utils.ErrorUtils.unprocessableEntity;
+import static com.findaroom.findaroomusers.utils.MessageUtils.ALREADY_FAVORITE;
+import static com.findaroom.findaroomusers.utils.MessageUtils.NOT_FAVORITE;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    private final Client oktaClient;
+    private final ReactiveOktaClient oktaClient;
     private final ObjectMapper objectMapper;
 
-    public UserService(ObjectMapper objectMapper) {
-        this.oktaClient = Clients.builder().build();
-        this.objectMapper = objectMapper;
+    public Mono<PublicUser> getById(String userId) {
+        return oktaClient.getUser(userId).map(PublicUser::from);
     }
 
-    public PublicUser getById(String userId) {
-        return PublicUser.from(oktaClient.getUser(userId));
-    }
-
-    public User getMe(String userId) {
+    public Mono<User> getMe(String userId) {
         return oktaClient.getUser(userId);
     }
 
-    public User update(String userId, UserInfo userInfo) {
-        User user = oktaClient.getUser(userId);
-        user.getProfile().putAll(objectMapper.convertValue(userInfo, new TypeReference<Map<String, Object>>() {}));
-        return user.update();
+    public Mono<User> update(String userId, UserInfo userInfo) {
+        return oktaClient
+                .getUser(userId)
+                .doOnNext(user -> user.getProfile()
+                        .putAll(objectMapper.convertValue(userInfo, new TypeReference<Map<String, Object>>() {
+                        })))
+                .flatMap(oktaClient::update);
     }
 
-    public User addAccommodationToFavourites(String userId, String accommodationId) {
-        return updateUserFavorites(userId, accommodationId, this::addToFavoritesInternal);
+    public Mono<User> addAccommodationToFavourites(String userId, String accommodationId) {
+        return oktaClient
+                .getUser(userId)
+                .flatMap(user -> {
+                    List<String> favorites = user.getProfile().getStringList("favoriteAccommodations");
+                    if (!CollectionUtils.isEmpty(favorites) && favorites.contains(accommodationId)) {
+                        return Mono.error(unprocessableEntity(ALREADY_FAVORITE));
+                    }
+                    favorites.add(accommodationId);
+                    return Mono.just(user);
+                })
+                .flatMap(oktaClient::update);
     }
 
-    public User removeAccommodationFromFavourites(String userId, String accommodationId) {
-        return updateUserFavorites(userId, accommodationId, this::removeFromFavoritesInternal);
-    }
-
-    private User updateUserFavorites(String userId, String accommodationId, BiConsumer<String, List<String>> operation) {
-        User user = oktaClient.getUser(userId);
-        operation.accept(accommodationId, user.getProfile().getStringList("favoriteAccommodations"));
-        return user.update();
-    }
-
-    private void addToFavoritesInternal(String accommodationId, List<String> favorites) {
-        boolean isAlreadyInFavorites = favorites
-                .stream()
-                .anyMatch(id -> Objects.equals(accommodationId, id));
-
-        if (isAlreadyInFavorites) {
-            throw new ResponseStatusException(UNPROCESSABLE_ENTITY, "Accommodation is already a favorite.");
-        }
-        favorites.add(accommodationId);
-    }
-
-    private void removeFromFavoritesInternal(String accommodationId, List<String> favorites) {
-        favorites
-                .stream()
-                .filter(id -> Objects.equals(accommodationId, id))
-                .findFirst()
-                .map(favorites::remove)
-                .orElseThrow(() -> new ResponseStatusException(UNPROCESSABLE_ENTITY, "Accommodation is not a favorite."));
+    public Mono<User> removeAccommodationFromFavourites(String userId, String accommodationId) {
+        return oktaClient
+                .getUser(userId)
+                .flatMap(user -> {
+                    List<String> favorites = user.getProfile().getStringList("favoriteAccommodations");
+                    if (!CollectionUtils.isEmpty(favorites) && favorites.contains(accommodationId)) {
+                        favorites.remove(accommodationId);
+                        return Mono.just(user);
+                    }
+                    return Mono.error(unprocessableEntity(NOT_FAVORITE));
+                })
+                .flatMap(oktaClient::update);
     }
 
 }
