@@ -1,15 +1,15 @@
 package com.findaroom.findaroomcore.service;
 
-import com.findaroom.findaroomcore.dto.UpdateAccommodation;
-import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
-import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.model.enums.BookingStatus;
-import com.findaroom.findaroomcore.repo.AccommodationRepository;
-import com.findaroom.findaroomcore.repo.BookingRepository;
-import com.findaroom.findaroomcore.service.verifier.AccommodationVerifier;
-import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
+import com.findaroom.findaroomcore.controller.event.UpdateAccommodation;
+import com.findaroom.findaroomcore.controller.filter.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.controller.filter.BookingSearchFilter;
+import com.findaroom.findaroomcore.domain.Accommodation;
+import com.findaroom.findaroomcore.domain.Booking;
+import com.findaroom.findaroomcore.domain.enums.BookingStatus;
+import com.findaroom.findaroomcore.repository.AccommodationRepository;
+import com.findaroom.findaroomcore.repository.BookingRepository;
+import com.findaroom.findaroomcore.service.validation.AccommodationVerifier;
+import com.findaroom.findaroomcore.service.validation.BookingVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.CONFIRMED;
+import static com.findaroom.findaroomcore.domain.enums.BookingStatus.CANCELLED;
+import static com.findaroom.findaroomcore.domain.enums.BookingStatus.CONFIRMED;
 import static com.findaroom.findaroomcore.utils.ErrorUtils.notFound;
 import static com.findaroom.findaroomcore.utils.MessageUtils.ACCOMMODATION_NOT_FOUND;
 import static com.findaroom.findaroomcore.utils.MessageUtils.BOOKING_NOT_FOUND;

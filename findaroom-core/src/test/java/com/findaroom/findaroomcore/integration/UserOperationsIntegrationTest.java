@@ -1,14 +1,14 @@
 package com.findaroom.findaroomcore.integration;
 
-import com.findaroom.findaroomcore.dto.BookAccommodation;
-import com.findaroom.findaroomcore.dto.BookingDates;
-import com.findaroom.findaroomcore.dto.ReviewAccommodation;
-import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.repo.AccommodationRepository;
-import com.findaroom.findaroomcore.repo.BookingRepository;
-import com.findaroom.findaroomcore.repo.ReviewRepository;
+import com.findaroom.findaroomcore.controller.event.BookAccommodation;
+import com.findaroom.findaroomcore.controller.event.BookingDates;
+import com.findaroom.findaroomcore.controller.event.ReviewAccommodation;
+import com.findaroom.findaroomcore.domain.Accommodation;
+import com.findaroom.findaroomcore.domain.Booking;
+import com.findaroom.findaroomcore.domain.Review;
+import com.findaroom.findaroomcore.repository.AccommodationRepository;
+import com.findaroom.findaroomcore.repository.BookingRepository;
+import com.findaroom.findaroomcore.repository.ReviewRepository;
 import com.findaroom.findaroomcore.utils.TestPojos;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ import reactor.core.publisher.Flux;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.*;
+import static com.findaroom.findaroomcore.domain.enums.BookingStatus.*;
 import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;

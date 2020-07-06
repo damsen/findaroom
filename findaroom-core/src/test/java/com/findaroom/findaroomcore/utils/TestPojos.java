@@ -1,16 +1,16 @@
 package com.findaroom.findaroomcore.utils;
 
-import com.findaroom.findaroomcore.dto.*;
-import com.findaroom.findaroomcore.model.*;
+import com.findaroom.findaroomcore.controller.event.*;
+import com.findaroom.findaroomcore.domain.*;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import static com.findaroom.findaroomcore.model.enums.AccommodationType.WHOLE_APARTMENT;
-import static com.findaroom.findaroomcore.model.enums.AccommodationType.WHOLE_LOFT;
-import static com.findaroom.findaroomcore.model.enums.Amenity.*;
+import static com.findaroom.findaroomcore.domain.enums.AccommodationType.WHOLE_APARTMENT;
+import static com.findaroom.findaroomcore.domain.enums.AccommodationType.WHOLE_LOFT;
+import static com.findaroom.findaroomcore.domain.enums.Amenity.*;
 
 public class TestPojos {
 

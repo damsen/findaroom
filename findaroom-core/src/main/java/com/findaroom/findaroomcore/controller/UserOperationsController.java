@@ -1,16 +1,17 @@
 package com.findaroom.findaroomcore.controller;
 
-import com.findaroom.findaroomcore.dto.BookAccommodation;
-import com.findaroom.findaroomcore.dto.BookingDates;
-import com.findaroom.findaroomcore.dto.CreateAccommodation;
-import com.findaroom.findaroomcore.dto.ReviewAccommodation;
-import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
-import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
-import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.model.Review;
+import com.findaroom.findaroomcore.controller.event.BookAccommodation;
+import com.findaroom.findaroomcore.controller.event.BookingDates;
+import com.findaroom.findaroomcore.controller.event.CreateAccommodation;
+import com.findaroom.findaroomcore.controller.event.ReviewAccommodation;
+import com.findaroom.findaroomcore.controller.filter.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.controller.filter.BookingSearchFilter;
+import com.findaroom.findaroomcore.controller.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.domain.Accommodation;
+import com.findaroom.findaroomcore.domain.Booking;
+import com.findaroom.findaroomcore.domain.Review;
 import com.findaroom.findaroomcore.service.UserOperationsService;
+import com.findaroom.findaroomcore.utils.ClaimUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -44,7 +45,7 @@ public class UserOperationsController {
     @GetMapping("/my-favorites")
     public Flux<Accommodation> getUserFavorites(AccommodationSearchFilter filter,
                                                 @AuthenticationPrincipal Jwt jwt) {
-        return userOps.findUserFavorites(jwt.getClaimAsStringList("favoriteAccommodations"), filter);
+        return userOps.findUserFavorites(ClaimUtils.favorites(jwt), filter);
     }
 
     @GetMapping("/my-bookings/{bookingId}")
@@ -57,7 +58,7 @@ public class UserOperationsController {
     @ResponseStatus(CREATED)
     public Mono<Accommodation> saveAccommodation(@RequestBody @Valid CreateAccommodation create,
                                                  @AuthenticationPrincipal Jwt jwt) {
-        return userOps.saveAccommodation(jwt.getSubject(), jwt.getClaimAsBoolean("superHost"), create);
+        return userOps.saveAccommodation(jwt.getSubject(), ClaimUtils.superHost(jwt), create);
     }
 
     @PostMapping("/accommodations/{accommodationId}/bookings")

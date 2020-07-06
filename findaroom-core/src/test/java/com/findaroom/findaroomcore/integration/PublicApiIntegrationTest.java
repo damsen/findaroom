@@ -1,13 +1,12 @@
 package com.findaroom.findaroomcore.integration;
 
-import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.repo.AccommodationRepository;
-import com.findaroom.findaroomcore.repo.BookingRepository;
-import com.findaroom.findaroomcore.repo.ReviewRepository;
+import com.findaroom.findaroomcore.domain.Accommodation;
+import com.findaroom.findaroomcore.domain.Booking;
+import com.findaroom.findaroomcore.domain.Review;
+import com.findaroom.findaroomcore.repository.AccommodationRepository;
+import com.findaroom.findaroomcore.repository.BookingRepository;
+import com.findaroom.findaroomcore.repository.ReviewRepository;
 import com.findaroom.findaroomcore.utils.TestPojos;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,7 @@ import reactor.core.publisher.Flux;
 
 import java.time.LocalDate;
 
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
-import static org.hamcrest.Matchers.*;
+import static com.findaroom.findaroomcore.domain.enums.BookingStatus.CANCELLED;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 

@@ -1,11 +1,11 @@
 package com.findaroom.findaroomcore.integration;
 
-import com.findaroom.findaroomcore.dto.UpdateAccommodation;
-import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.repo.AccommodationRepository;
-import com.findaroom.findaroomcore.repo.BookingRepository;
-import com.findaroom.findaroomcore.repo.ReviewRepository;
+import com.findaroom.findaroomcore.controller.event.UpdateAccommodation;
+import com.findaroom.findaroomcore.domain.Accommodation;
+import com.findaroom.findaroomcore.domain.Booking;
+import com.findaroom.findaroomcore.repository.AccommodationRepository;
+import com.findaroom.findaroomcore.repository.BookingRepository;
+import com.findaroom.findaroomcore.repository.ReviewRepository;
 import com.findaroom.findaroomcore.utils.TestPojos;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +18,8 @@ import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.DONE;
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.PENDING;
+import static com.findaroom.findaroomcore.domain.enums.BookingStatus.DONE;
+import static com.findaroom.findaroomcore.domain.enums.BookingStatus.PENDING;
 import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 import static org.springframework.http.MediaType.APPLICATION_JSON;

@@ -1,14 +1,14 @@
 package com.findaroom.findaroomcore.service;
 
-import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
-import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
-import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.model.Review;
-import com.findaroom.findaroomcore.repo.AccommodationRepository;
-import com.findaroom.findaroomcore.repo.BookingRepository;
-import com.findaroom.findaroomcore.repo.ReviewRepository;
+import com.findaroom.findaroomcore.controller.filter.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.controller.filter.BookingSearchFilter;
+import com.findaroom.findaroomcore.controller.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.domain.Accommodation;
+import com.findaroom.findaroomcore.domain.Booking;
+import com.findaroom.findaroomcore.domain.Review;
+import com.findaroom.findaroomcore.repository.AccommodationRepository;
+import com.findaroom.findaroomcore.repository.BookingRepository;
+import com.findaroom.findaroomcore.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;

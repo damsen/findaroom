@@ -2,8 +2,8 @@ package com.findaroom.findaroomcore.unit.controller;
 
 import com.findaroom.findaroomcore.config.SecurityConfig;
 import com.findaroom.findaroomcore.controller.HostOperationsController;
-import com.findaroom.findaroomcore.dto.UpdateAccommodation;
-import com.findaroom.findaroomcore.model.Booking;
+import com.findaroom.findaroomcore.controller.event.UpdateAccommodation;
+import com.findaroom.findaroomcore.domain.Booking;
 import com.findaroom.findaroomcore.service.HostOperationsService;
 import com.findaroom.findaroomcore.utils.TestPojos;
 import org.junit.jupiter.api.Test;

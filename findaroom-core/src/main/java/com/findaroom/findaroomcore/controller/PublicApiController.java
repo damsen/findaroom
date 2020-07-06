@@ -1,9 +1,9 @@
 package com.findaroom.findaroomcore.controller;
 
-import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filters.ReviewSearchFilter;
-import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.model.Review;
+import com.findaroom.findaroomcore.controller.filter.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.controller.filter.ReviewSearchFilter;
+import com.findaroom.findaroomcore.domain.Accommodation;
+import com.findaroom.findaroomcore.domain.Review;
 import com.findaroom.findaroomcore.service.PublicApiService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,14 +1,14 @@
 package com.findaroom.findaroomcore.unit.service;
 
-import com.findaroom.findaroomcore.dto.filters.AccommodationSearchFilter;
-import com.findaroom.findaroomcore.dto.filters.BookingSearchFilter;
-import com.findaroom.findaroomcore.model.Accommodation;
-import com.findaroom.findaroomcore.model.Booking;
-import com.findaroom.findaroomcore.repo.AccommodationRepository;
-import com.findaroom.findaroomcore.repo.BookingRepository;
+import com.findaroom.findaroomcore.controller.filter.AccommodationSearchFilter;
+import com.findaroom.findaroomcore.controller.filter.BookingSearchFilter;
+import com.findaroom.findaroomcore.domain.Accommodation;
+import com.findaroom.findaroomcore.domain.Booking;
+import com.findaroom.findaroomcore.repository.AccommodationRepository;
+import com.findaroom.findaroomcore.repository.BookingRepository;
 import com.findaroom.findaroomcore.service.HostOperationsService;
-import com.findaroom.findaroomcore.service.verifier.AccommodationVerifier;
-import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
+import com.findaroom.findaroomcore.service.validation.AccommodationVerifier;
+import com.findaroom.findaroomcore.service.validation.BookingVerifier;
 import com.findaroom.findaroomcore.utils.ErrorUtils;
 import com.findaroom.findaroomcore.utils.TestPojos;
 import com.findaroom.findaroomcore.utils.TestPredicates;
@@ -21,8 +21,8 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
-import static com.findaroom.findaroomcore.model.enums.BookingStatus.CONFIRMED;
+import static com.findaroom.findaroomcore.domain.enums.BookingStatus.CANCELLED;
+import static com.findaroom.findaroomcore.domain.enums.BookingStatus.CONFIRMED;
 import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;

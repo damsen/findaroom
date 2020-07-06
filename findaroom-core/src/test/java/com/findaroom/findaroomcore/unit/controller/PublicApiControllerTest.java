@@ -2,7 +2,7 @@ package com.findaroom.findaroomcore.unit.controller;
 
 import com.findaroom.findaroomcore.config.SecurityConfig;
 import com.findaroom.findaroomcore.controller.PublicApiController;
-import com.findaroom.findaroomcore.model.Review;
+import com.findaroom.findaroomcore.domain.Review;
 import com.findaroom.findaroomcore.service.PublicApiService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
