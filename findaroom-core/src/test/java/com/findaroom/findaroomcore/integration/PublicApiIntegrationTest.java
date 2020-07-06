@@ -7,6 +7,7 @@ import com.findaroom.findaroomcore.repo.AccommodationRepository;
 import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.repo.ReviewRepository;
 import com.findaroom.findaroomcore.utils.TestPojos;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import reactor.core.publisher.Flux;
 import java.time.LocalDate;
 
 import static com.findaroom.findaroomcore.model.enums.BookingStatus.CANCELLED;
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,8 +67,9 @@ public class PublicApiIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.[0].accommodationId", "123").exists()
-                .jsonPath("@.[1].accommodationId", "456").exists();
+                .jsonPath("@").value(hasSize(2))
+                .jsonPath("@.[0].accommodationId").isEqualTo("123")
+                .jsonPath("@.[1].accommodationId").isEqualTo("456");
     }
 
     @Test
@@ -76,7 +80,7 @@ public class PublicApiIntegrationTest {
         Accommodation acc2 = TestPojos.accommodation();
         acc2.setAccommodationId("456");
         Accommodation acc3 = TestPojos.accommodation();
-        acc2.setAccommodationId("789");
+        acc3.setAccommodationId("789");
         accommodationRepo.saveAll(Flux.just(acc1, acc2, acc3)).blockLast();
 
         Booking book1 = TestPojos.booking();
@@ -102,8 +106,9 @@ public class PublicApiIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.[0].accommodationId", "456").exists()
-                .jsonPath("@.[1].accommodationId", "789").exists();
+                .jsonPath("@").value(hasSize(2))
+                .jsonPath("@.[0].accommodationId").isEqualTo("456")
+                .jsonPath("@.[1].accommodationId").isEqualTo("789");
     }
 
     @Test
@@ -120,7 +125,7 @@ public class PublicApiIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.accommodationId", "123").exists();
+                .jsonPath("@.accommodationId").isEqualTo("123");
     }
 
     @Test

@@ -122,8 +122,8 @@ public class UserOperationsIntegrationTest {
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("@").value(hasSize(2))
-                .jsonPath("@.[0].accommodationId", "123").exists()
-                .jsonPath("@.[1].accommodationId", "456").exists();
+                .jsonPath("@.[0].accommodationId").isEqualTo("123")
+                .jsonPath("@.[1].accommodationId").isEqualTo("456");
     }
 
     @Test
@@ -144,8 +144,8 @@ public class UserOperationsIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.bookingId", "111").exists()
-                .jsonPath("@.userId", "andrea_damiani@protonmail.com").exists();
+                .jsonPath("@.bookingId").isEqualTo("111")
+                .jsonPath("@.userId").isEqualTo("andrea_damiani@protonmail.com");
     }
 
     @Test
@@ -165,8 +165,8 @@ public class UserOperationsIntegrationTest {
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.host.hostId", "andrea_damiani@protonmail.com").exists()
-                .jsonPath("@.host.superHost", "true").exists();
+                .jsonPath("@.host.hostId").isEqualTo("andrea_damiani@protonmail.com")
+                .jsonPath("@.host.superHost").isEqualTo(true);
     }
 
     @Test
@@ -188,9 +188,9 @@ public class UserOperationsIntegrationTest {
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.accommodationId", "123").exists()
-                .jsonPath("@.userId", "andrea_damiani@protonmail.com").exists()
-                .jsonPath("@.status", "PENDING").exists();
+                .jsonPath("@.accommodationId").isEqualTo("123")
+                .jsonPath("@.userId").isEqualTo("andrea_damiani@protonmail.com")
+                .jsonPath("@.status").isEqualTo("PENDING");
     }
 
     @Test
@@ -212,7 +212,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", USER_IS_ACCOMMODATION_HOST).exists();
+                .jsonPath("@.message").isEqualTo(USER_IS_ACCOMMODATION_HOST);
     }
 
     @Test
@@ -236,7 +236,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", ACCOMMODATION_MAX_GUESTS_EXCEEDED).exists();
+                .jsonPath("@.message").isEqualTo(ACCOMMODATION_MAX_GUESTS_EXCEEDED);
     }
 
     @Test
@@ -265,7 +265,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", USER_HAS_BOOKINGS_BETWEEN_DATES).exists();
+                .jsonPath("@.message").isEqualTo(USER_HAS_BOOKINGS_BETWEEN_DATES);
     }
 
     @Test
@@ -294,7 +294,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", ACCOMMODATION_ALREADY_BOOKED).exists();
+                .jsonPath("@.message").isEqualTo(ACCOMMODATION_ALREADY_BOOKED);
     }
 
     @Test
@@ -330,11 +330,11 @@ public class UserOperationsIntegrationTest {
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.accommodationId", "123").exists()
-                .jsonPath("@.bookingId", "111").exists()
-                .jsonPath("@.message", "message").exists()
-                .jsonPath("@.rating", "5.0").exists()
-                .jsonPath("@.userId", "andrea_damiani@protonmail.com").exists();
+                .jsonPath("@.accommodationId").isEqualTo("123")
+                .jsonPath("@.bookingId").isEqualTo("111")
+                .jsonPath("@.message").isEqualTo("message")
+                .jsonPath("@.rating").isEqualTo(5.0)
+                .jsonPath("@.userId").isEqualTo("andrea_damiani@protonmail.com");
     }
 
     @Test
@@ -364,7 +364,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", BOOKING_NOT_COMPLETED).exists();
+                .jsonPath("@.message").isEqualTo(BOOKING_NOT_COMPLETED);
     }
 
     @Test
@@ -390,10 +390,10 @@ public class UserOperationsIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.userId", "andrea_damiani@protonmail.com").exists()
-                .jsonPath("@.accommodationId", "123").exists()
-                .jsonPath("@.bookingId", "111").exists()
-                .jsonPath("@.status", "CANCELLED").exists();
+                .jsonPath("@.userId").isEqualTo("andrea_damiani@protonmail.com")
+                .jsonPath("@.accommodationId").isEqualTo("123")
+                .jsonPath("@.bookingId").isEqualTo("111")
+                .jsonPath("@.status").isEqualTo("CANCELLED");
     }
 
     @Test
@@ -419,7 +419,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", BOOKING_NOT_ACTIVE).exists();
+                .jsonPath("@.message").isEqualTo(BOOKING_NOT_ACTIVE);
     }
 
     @Test
@@ -453,11 +453,11 @@ public class UserOperationsIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.accommodationId", "123").exists()
-                .jsonPath("@.bookingId", "111").exists()
-                .jsonPath("@.checkin", reschedule.getCheckin()).exists()
-                .jsonPath("@.checkout", reschedule.getCheckout()).exists()
-                .jsonPath("@.status", "PENDING").exists();
+                .jsonPath("@.accommodationId").isEqualTo("123")
+                .jsonPath("@.bookingId").isEqualTo("111")
+                .jsonPath("@.checkin").isEqualTo(reschedule.getCheckin().toString())
+                .jsonPath("@.checkout").isEqualTo(reschedule.getCheckout().toString())
+                .jsonPath("@.status").isEqualTo("PENDING");
     }
 
     @Test
@@ -490,7 +490,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", BOOKING_NOT_ACTIVE).exists();
+                .jsonPath("@.message").isEqualTo(BOOKING_NOT_ACTIVE);
     }
 
     @Test
@@ -522,7 +522,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", BOOKING_DATES_SAME_AS_RESCHEDULE_DATES).exists();
+                .jsonPath("@.message").isEqualTo(BOOKING_DATES_SAME_AS_RESCHEDULE_DATES);
     }
 
     @Test
@@ -559,7 +559,7 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", USER_HAS_BOOKINGS_BETWEEN_DATES).exists();
+                .jsonPath("@.message").isEqualTo(USER_HAS_BOOKINGS_BETWEEN_DATES);
     }
 
     @Test
@@ -595,6 +595,6 @@ public class UserOperationsIntegrationTest {
                 .exchange()
                 .expectStatus().isEqualTo(UNPROCESSABLE_ENTITY)
                 .expectBody()
-                .jsonPath("@.message", ACCOMMODATION_ALREADY_BOOKED).exists();
+                .jsonPath("@.message").isEqualTo(ACCOMMODATION_ALREADY_BOOKED);
     }
 }

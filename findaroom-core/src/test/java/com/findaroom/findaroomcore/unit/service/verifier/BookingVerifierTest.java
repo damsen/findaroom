@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.mockito.InjectMocks;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Mono;
@@ -22,7 +23,7 @@ import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 @ExtendWith(SpringExtension.class)
 public class BookingVerifierTest {
 
-    @MockBean
+    @InjectMocks
     private BookingVerifier verifier;
 
     @Test

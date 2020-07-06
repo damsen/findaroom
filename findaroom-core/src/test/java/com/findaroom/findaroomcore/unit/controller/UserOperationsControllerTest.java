@@ -92,7 +92,7 @@ public class UserOperationsControllerTest {
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("@").value(hasSize(1))
-                .jsonPath("@.[0].accommodationId", "123").exists();
+                .jsonPath("@.[0].accommodationId").isEqualTo("123");
     }
 
     @Test
