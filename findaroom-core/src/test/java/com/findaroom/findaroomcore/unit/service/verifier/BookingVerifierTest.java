@@ -6,12 +6,11 @@ import com.findaroom.findaroomcore.model.enums.BookingStatus;
 import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
 import com.findaroom.findaroomcore.utils.TestPojos;
 import com.findaroom.findaroomcore.utils.TestPredicates;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -21,15 +20,10 @@ import java.time.LocalDate;
 import static com.findaroom.findaroomcore.utils.MessageUtils.*;
 
 @ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BookingVerifierTest {
 
+    @MockBean
     private BookingVerifier verifier;
-
-    @BeforeAll
-    public void setup() {
-        verifier = new BookingVerifier();
-    }
 
     @Test
     public void verifyBookingIsCompleted() {

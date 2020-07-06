@@ -11,11 +11,10 @@ import com.findaroom.findaroomcore.repo.ReviewRepository;
 import com.findaroom.findaroomcore.service.PublicApiService;
 import com.findaroom.findaroomcore.utils.TestPojos;
 import com.findaroom.findaroomcore.utils.TestPredicates;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,24 +29,19 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PublicApiServiceTest {
 
-    @MockBean
+    @Mock
     private AccommodationRepository accommodationRepo;
 
-    @MockBean
+    @Mock
     private BookingRepository bookingRepo;
     
-    @MockBean
+    @Mock
     private ReviewRepository reviewRepo;
-    
-    private PublicApiService publicApi;
 
-    @BeforeAll
-    public void setup() {
-        publicApi = new PublicApiService(accommodationRepo, bookingRepo, reviewRepo);
-    }
+    @InjectMocks
+    private PublicApiService publicApi;
 
     @Test
     public void findAccommodationsByFilter_withNoDateFilters() {

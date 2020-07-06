@@ -17,11 +17,10 @@ import com.findaroom.findaroomcore.service.verifier.BookingVerifier;
 import com.findaroom.findaroomcore.utils.ErrorUtils;
 import com.findaroom.findaroomcore.utils.TestPojos;
 import com.findaroom.findaroomcore.utils.TestPredicates;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,30 +37,25 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserOperationsServiceTest {
 
-    @MockBean
+    @Mock
     private AccommodationRepository accommodationRepo;
 
-    @MockBean
+    @Mock
     private BookingRepository bookingRepo;
 
-    @MockBean
+    @Mock
     private ReviewRepository reviewRepo;
 
-    @MockBean
+    @Mock
     private AccommodationVerifier accommodationVerifier;
 
-    @MockBean
+    @Mock
     private BookingVerifier bookingVerifier;
 
+    @InjectMocks
     private UserOperationsService userOps;
-
-    @BeforeAll
-    public void setup() {
-        userOps = new UserOperationsService(accommodationRepo, bookingRepo, reviewRepo, accommodationVerifier, bookingVerifier);
-    }
 
     @Test
     public void findBookingsByUserId() {

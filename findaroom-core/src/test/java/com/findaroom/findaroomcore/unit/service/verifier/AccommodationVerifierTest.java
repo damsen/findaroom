@@ -5,11 +5,10 @@ import com.findaroom.findaroomcore.repo.BookingRepository;
 import com.findaroom.findaroomcore.service.verifier.AccommodationVerifier;
 import com.findaroom.findaroomcore.utils.TestPojos;
 import com.findaroom.findaroomcore.utils.TestPredicates;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -19,18 +18,13 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AccommodationVerifierTest {
 
-    private AccommodationVerifier verifier;
-
-    @MockBean
+    @Mock
     private BookingRepository bookingRepo;
 
-    @BeforeAll
-    public void setup() {
-        verifier = new AccommodationVerifier(bookingRepo);
-    }
+    @InjectMocks
+    private AccommodationVerifier verifier;
 
     @Test
     public void verifyUserIsNotAccommodationHost() {
