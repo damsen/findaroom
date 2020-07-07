@@ -72,9 +72,9 @@ public class NotificationsIntegrationTest {
                 .expectStatus().isOk()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.notificationId", "123").exists()
-                .jsonPath("@.userId", "andrea_damiani@protonmail.com").exists()
-                .jsonPath("@.seen", "true").exists();
+                .jsonPath("@.notificationId").isEqualTo("123")
+                .jsonPath("@.userId").isEqualTo("andrea_damiani@protonmail.com")
+                .jsonPath("@.seen").isEqualTo(true);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class NotificationsIntegrationTest {
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody()
-                .jsonPath("@.message", NOTIFICATION_NOT_FOUND).exists();
+                .jsonPath("@.message").isEqualTo(NOTIFICATION_NOT_FOUND);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class NotificationsIntegrationTest {
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
-                .jsonPath("@.userId", "andrea_damiani@protonmail.com").exists();
+                .jsonPath("@.userId").isEqualTo("andrea_damiani@protonmail.com");
     }
 
     @Test
@@ -133,6 +133,6 @@ public class NotificationsIntegrationTest {
                 .exchange()
                 .expectStatus().isNotFound()
                 .expectBody()
-                .jsonPath("@.message", NOTIFICATION_NOT_FOUND).exists();
+                .jsonPath("@.message").isEqualTo(NOTIFICATION_NOT_FOUND);
     }
 }
