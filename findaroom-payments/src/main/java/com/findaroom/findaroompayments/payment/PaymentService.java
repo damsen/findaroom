@@ -26,7 +26,7 @@ public class PaymentService {
     public Mono<Payment> findByPaymentIdAndUserId(String paymentId, String userId) {
         return paymentRepo
                 .findByPaymentIdAndUserId(paymentId, userId)
-                .switchIfEmpty(Mono.error(notFound(ORDER_NOT_FOUND)));
+                .switchIfEmpty(Mono.error(notFound(PAYMENT_NOT_FOUND)));
     }
 
     public Mono<Payment> checkout(String userId, String orderId, String bookingId) {

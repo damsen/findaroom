@@ -63,7 +63,7 @@ public class PaymentServiceTest {
 
         StepVerifier
                 .create(payment)
-                .expectErrorMatches(TestPredicates.notFound(ORDER_NOT_FOUND))
+                .expectErrorMatches(TestPredicates.notFound(PAYMENT_NOT_FOUND))
                 .verify();
     }
 

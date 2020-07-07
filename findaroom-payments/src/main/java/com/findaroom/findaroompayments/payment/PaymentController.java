@@ -7,6 +7,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
+
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
@@ -24,7 +26,8 @@ public class PaymentController {
 
     @PostMapping
     @ResponseStatus(CREATED)
-    public Mono<Payment> checkout(@AuthenticationPrincipal Jwt jwt) {
-        return paymentService.checkout(jwt.getSubject(), "999", "111");
+    public Mono<Payment> checkout(@RequestBody @Valid Checkout checkout,
+                                  @AuthenticationPrincipal Jwt jwt) {
+        return paymentService.checkout(jwt.getSubject(), checkout.getOrderId(), checkout.getBookingId());
     }
 }
