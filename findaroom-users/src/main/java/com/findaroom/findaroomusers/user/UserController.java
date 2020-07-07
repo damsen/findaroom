@@ -33,15 +33,15 @@ public class UserController {
     }
 
     @PostMapping("/my-account/favorites")
-    public Mono<User> addAccommodationToFavorites(@RequestParam String accommodationId,
-                                                  @AuthenticationPrincipal Jwt jwt) {
-        return userService.addAccommodationToFavourites(jwt.getSubject(), accommodationId);
+    public Mono<User> addFavorite(@RequestParam String accommodationId,
+                                  @AuthenticationPrincipal Jwt jwt) {
+        return userService.addFavorite(jwt.getSubject(), accommodationId);
     }
 
     @DeleteMapping("/my-account/favorites/{accommodationId}")
-    public Mono<User> removeAccommodationFromFavorites(@PathVariable String accommodationId,
-                                                       @AuthenticationPrincipal Jwt jwt) {
-        return userService.removeAccommodationFromFavourites(jwt.getSubject(), accommodationId);
+    public Mono<User> removeFavorite(@PathVariable String accommodationId,
+                                     @AuthenticationPrincipal Jwt jwt) {
+        return userService.removeFavorite(jwt.getSubject(), accommodationId);
     }
 
 }

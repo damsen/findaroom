@@ -39,7 +39,7 @@ public class UserService {
                 .flatMap(oktaClient::update);
     }
 
-    public Mono<User> addAccommodationToFavourites(String userId, String accommodationId) {
+    public Mono<User> addFavorite(String userId, String accommodationId) {
         return oktaClient
                 .getUser(userId)
                 .flatMap(user -> {
@@ -53,7 +53,7 @@ public class UserService {
                 .flatMap(oktaClient::update);
     }
 
-    public Mono<User> removeAccommodationFromFavourites(String userId, String accommodationId) {
+    public Mono<User> removeFavorite(String userId, String accommodationId) {
         return oktaClient
                 .getUser(userId)
                 .flatMap(user -> {
