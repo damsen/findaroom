@@ -1,5 +1,6 @@
 package com.findaroom.findaroomcore.controller.event;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.findaroom.findaroomcore.domain.enums.AccommodationType;
 import com.findaroom.findaroomcore.domain.enums.Amenity;
 import lombok.AccessLevel;
@@ -27,6 +28,7 @@ public class CreateAccommodation {
     @NotNull AccommodationType type;
     @NotNull @Valid Address address;
     @NotNull List<Amenity> amenities;
+    @NotNull List<Image> images;
 
     @Getter
     @Setter
@@ -51,5 +53,17 @@ public class CreateAccommodation {
         public GeoJsonPoint toGeoJsonPoint(){
             return new GeoJsonPoint(x, y);
         }
+    }
+
+    @Getter
+    @Setter
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class Image {
+
+        @JsonProperty("id") @NotBlank String imageId;
+        @JsonProperty("link") @NotBlank String url;
+        @NotNull @Positive Integer width;
+        @NotNull @Positive Integer height;
+        @JsonProperty("deletehash") @NotBlank String deleteHash;
     }
 }

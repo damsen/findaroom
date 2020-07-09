@@ -15,7 +15,7 @@ import static com.findaroom.findaroomcore.domain.enums.Amenity.*;
 public class TestPojos {
 
     public static Accommodation accommodation() {
-        return Accommodation.of("name", "desc", 100.0, 4, 1, 1, 2, host(), WHOLE_APARTMENT, address(), List.of(WIFI, KITCHEN));
+        return Accommodation.of("name", "desc", 100.0, 4, 1, 1, 2, host(), WHOLE_APARTMENT, address(), List.of(WIFI, KITCHEN), List.of(image(), image()));
     }
 
     public static Address address() {
@@ -34,6 +34,10 @@ public class TestPojos {
         return Review.of("accommodationId", "userId", UUID.randomUUID().toString(), 5.0, "message");
     }
 
+    public static Image image() {
+        return new Image("212", "url", 600, 400, "deletehash");
+    }
+
     public static CreateAccommodation createAccommodation() {
         CreateAccommodation create = new CreateAccommodation();
         create.setName("name");
@@ -46,6 +50,7 @@ public class TestPojos {
         create.setType(WHOLE_APARTMENT);
         create.setAddress(createAddress());
         create.setAmenities(List.of(WIFI, KITCHEN));
+        create.setImages(List.of(createImage(), createImage()));
         return create;
     }
 
@@ -60,6 +65,16 @@ public class TestPojos {
         location.setY(-1.0002324);
         address.setLocation(location);
         return address;
+    }
+
+    public static CreateAccommodation.Image createImage() {
+        CreateAccommodation.Image image = new CreateAccommodation.Image();
+        image.setImageId("id");
+        image.setUrl("url");
+        image.setWidth(600);
+        image.setHeight(400);
+        image.setDeleteHash("hash");
+        return image;
     }
 
     public static UpdateAccommodation updateAccommodation() {

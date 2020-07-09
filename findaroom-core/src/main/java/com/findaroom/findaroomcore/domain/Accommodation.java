@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Data
 @Document(collection = "accommodations")
@@ -39,8 +40,8 @@ public class Accommodation {
     List<Amenity> amenities;
     List<Image> images;
 
-    public static Accommodation of(String name, String description, double pricePerNight, int maxGuests, int restrooms, int bedrooms, int beds, Host host, AccommodationType type, Address address, List<Amenity> amenities) {
-        return new Accommodation(null, name, description, pricePerNight, 0.0d, maxGuests, true, restrooms, bedrooms, beds, host, type, address, amenities, List.of());
+    public static Accommodation of(String name, String description, double pricePerNight, int maxGuests, int restrooms, int bedrooms, int beds, Host host, AccommodationType type, Address address, List<Amenity> amenities, List<Image> images) {
+        return new Accommodation(null, name, description, pricePerNight, 0.0d, maxGuests, true, restrooms, bedrooms, beds, host, type, address, amenities, images);
     }
 
     public static Accommodation from(String userId, boolean superHost, CreateAccommodation create) {
@@ -55,7 +56,8 @@ public class Accommodation {
                 new Host(userId, superHost),
                 create.getType(),
                 Address.from(create.getAddress()),
-                create.getAmenities()
+                create.getAmenities(),
+                create.getImages().stream().map(Image::from).collect(Collectors.toList())
         );
     }
 
