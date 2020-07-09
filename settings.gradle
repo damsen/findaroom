@@ -12,4 +12,4 @@ pluginManagement {
 	}
 }
 rootProject.name = 'findaroom-app'
-include 'findaroom-gateway', 'findaroom-core', 'findaroom-notifications', 'findaroom-payments', 'findaroom-users'
+include 'findaroom-gateway', 'findaroom-core', 'findaroom-notifications', 'findaroom-payments', 'findaroom-users', 'findaroom-images'

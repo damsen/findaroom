@@ -32,6 +32,10 @@ public class RouterConfig {
                         .path("/api/v1/users/**")
                         .filters(f -> f.filter(filterFactory.apply()))
                         .uri("http://localhost:8083"))
+                .route("images", r -> r
+                        .path("/api/v1/images/**")
+                        .filters(f -> f.filter(filterFactory.apply()))
+                        .uri("http://localhost:8084"))
                 .build();
     }
 }

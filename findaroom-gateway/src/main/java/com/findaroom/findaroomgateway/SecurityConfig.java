@@ -24,6 +24,7 @@ public class SecurityConfig {
                 .pathMatchers("/api/v1/payments/**").authenticated()
                 .pathMatchers("/api/v1/notifications/**").authenticated()
                 .pathMatchers("/api/v1/users/**").authenticated()
+                .pathMatchers("/api/v1/images/**").authenticated()
                 .and()
                 .oauth2Login()
                 .and()
