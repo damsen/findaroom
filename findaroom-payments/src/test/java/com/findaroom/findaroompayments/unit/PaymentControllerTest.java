@@ -1,6 +1,7 @@
 package com.findaroom.findaroompayments.unit;
 
 import com.findaroom.findaroompayments.config.SecurityConfig;
+import com.findaroom.findaroompayments.payment.Checkout;
 import com.findaroom.findaroompayments.payment.PaymentService;
 import com.findaroom.findaroompayments.utils.TestPojos;
 import org.junit.jupiter.api.Test;
@@ -62,12 +63,29 @@ public class PaymentControllerTest {
                 .post()
                 .uri("/api/v1/payments")
                 .contentType(APPLICATION_JSON)
-//                .bodyValue()
+                .bodyValue(new Checkout("orderId", "bookingId"))
                 .exchange()
                 .expectStatus().isCreated()
                 .expectHeader().contentType(APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("@").isNotEmpty();
+    }
+
+    @Test
+    public void checkout_whenBodyIsNotValid_shouldReturnBadRequest() {
+
+        when(paymentService.checkout(anyString(), anyString(), anyString())).thenReturn(Mono.just(TestPojos.payment()));
+
+        var jwtMutator = mockJwt().jwt(jwt -> jwt.claim("sub", "andrea_damiani@protonmail.com"));
+
+        webTestClient
+                .mutateWith(jwtMutator)
+                .post()
+                .uri("/api/v1/payments")
+                .contentType(APPLICATION_JSON)
+                .bodyValue(new Checkout("", ""))
+                .exchange()
+                .expectStatus().isBadRequest();
     }
 
 }
