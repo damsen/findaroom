@@ -6,7 +6,8 @@ import com.findaroom.findaroompayments.payment.PaymentService;
 import com.findaroom.findaroompayments.payment.ReactivePayPalClient;
 import com.findaroom.findaroompayments.utils.TestPojos;
 import com.findaroom.findaroompayments.utils.TestPredicates;
-import com.paypal.orders.*;
+import com.paypal.orders.Order;
+import com.paypal.orders.PurchaseUnit;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -20,9 +21,11 @@ import reactor.test.StepVerifier;
 import java.util.List;
 
 import static com.findaroom.findaroompayments.utils.MessageUtils.*;
-import static com.findaroom.findaroompayments.utils.TestPredicates.*;
+import static com.findaroom.findaroompayments.utils.TestPredicates.internalServerError;
+import static com.findaroom.findaroompayments.utils.TestPredicates.unprocessableEntity;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
