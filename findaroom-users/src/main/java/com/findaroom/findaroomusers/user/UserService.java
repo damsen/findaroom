@@ -10,6 +10,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import static com.findaroom.findaroomusers.utils.ErrorUtils.unprocessableEntity;
 import static com.findaroom.findaroomusers.utils.MessageUtils.ALREADY_FAVORITE;
@@ -31,39 +32,39 @@ public class UserService {
     }
 
     public Mono<User> update(String userId, UserInfo userInfo) {
-        return oktaClient
-                .getUser(userId)
-                .doOnNext(user -> user.getProfile()
-                        .putAll(objectMapper.convertValue(userInfo, new TypeReference<Map<String, Object>>() {
-                        })))
-                .flatMap(oktaClient::update);
+        return updateUser(userId, user -> {
+            user.getProfile().putAll(objectMapper.convertValue(userInfo, new TypeReference<Map<String, Object>>() {
+            }));
+            return Mono.just(user);
+        });
     }
 
     public Mono<User> addFavorite(String userId, String accommodationId) {
-        return oktaClient
-                .getUser(userId)
-                .flatMap(user -> {
-                    List<String> favorites = user.getProfile().getStringList("favoriteAccommodations");
-                    if (!CollectionUtils.isEmpty(favorites) && favorites.contains(accommodationId)) {
-                        return Mono.error(unprocessableEntity(ALREADY_FAVORITE));
-                    }
-                    favorites.add(accommodationId);
-                    return Mono.just(user);
-                })
-                .flatMap(oktaClient::update);
+        return updateUser(userId, user -> {
+            List<String> favorites = user.getProfile().getStringList("favoriteAccommodations");
+            if (!CollectionUtils.isEmpty(favorites) && favorites.contains(accommodationId)) {
+                return Mono.error(unprocessableEntity(ALREADY_FAVORITE));
+            }
+            favorites.add(accommodationId);
+            return Mono.just(user);
+        });
     }
 
     public Mono<User> removeFavorite(String userId, String accommodationId) {
+        return updateUser(userId, user -> {
+            List<String> favorites = user.getProfile().getStringList("favoriteAccommodations");
+            if (!CollectionUtils.isEmpty(favorites) && favorites.contains(accommodationId)) {
+                favorites.remove(accommodationId);
+                return Mono.just(user);
+            }
+            return Mono.error(unprocessableEntity(NOT_FAVORITE));
+        });
+    }
+
+    private Mono<User> updateUser(String userId, Function<User, Mono<User>> update) {
         return oktaClient
                 .getUser(userId)
-                .flatMap(user -> {
-                    List<String> favorites = user.getProfile().getStringList("favoriteAccommodations");
-                    if (!CollectionUtils.isEmpty(favorites) && favorites.contains(accommodationId)) {
-                        favorites.remove(accommodationId);
-                        return Mono.just(user);
-                    }
-                    return Mono.error(unprocessableEntity(NOT_FAVORITE));
-                })
+                .flatMap(update)
                 .flatMap(oktaClient::update);
     }
 
