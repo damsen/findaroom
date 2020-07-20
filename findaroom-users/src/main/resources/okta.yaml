@@ -1,0 +1,13 @@
+okta:
+  client:
+    connectionTimeout: 30
+    orgUrl: ${OKTA_ORG_URL}
+    proxy:
+      port: null
+      host: null
+      username: null
+      password: null
+    token: ${OKTA_TOKEN}
+    requestTimeout: 0
+    rateLimit:
+      maxRetries: 4
